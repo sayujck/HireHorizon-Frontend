@@ -1,0 +1,51 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    font-family: "Poppins", sans-serif;
+    box-sizing: border-box;
+}
+
+.contactUsBtn {
+    background-color: white;
+    padding: 4px 10px;
+    border: 1px solid #6300B3 ;
+    border-radius: 5px;   
+    font-weight: 500; 
+    color: #6300B3;
+}
+
+.signupBtn, .findJobBtn {
+    background-color: #6300B3;
+    color: white;
+    padding: 4px 14px;
+    border: 1px solid #6300B3 ;
+    border-radius: 5px; 
+    font-weight: 500;
+}
+
+.whitebtn {
+    background-color: white;
+    padding: 4px 10px;
+    border: 1px solid #6300B3 ;
+    border-radius: 5px;   
+    font-weight: 500; 
+    color: #6300B3;
+}
+
+.violetbtn {
+    background-color: #6300B3;
+    padding: 4px 10px;
+    border: 1px solid #6300B3 ;
+    border-radius: 5px; 
+    font-weight: 500;
+    color: white;
+    
+}
+
+.heroSection {
+    background-image: url(./assets/hero_bg.png);
+}
+
+.footer {
+    background-image: url(./assets/footer.png);
+}
