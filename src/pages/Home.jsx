@@ -1,138 +1,252 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Header from '../components/Header'
 import hero from '../assets/hero.png'
-import { Card } from 'react-bootstrap'
+import { Card, Modal } from 'react-bootstrap'
 import logo from '../assets/logo.svg'
 import { useNavigate } from 'react-router-dom'
-import  google from '../assets/company/google.png'
-import  flipkart from '../assets/company/flipkart.png'
-import  ibm from '../assets/company/ibm.png'
-import  microsoft from '../assets/company/microsoft.png'
-import  youtube from '../assets/company/youtube.png'
+import google from '../assets/company/google.png'
+import flipkart from '../assets/company/flipkart.png'
+import ibm from '../assets/company/ibm.png'
+import microsoft from '../assets/company/microsoft.png'
+import youtube from '../assets/company/youtube.png'
 import Footer from '../components/Footer'
+import { applyJobAPI, getJobById, latestjobsAPI } from '../services/allAPI'
+import { SearchOutlined } from '@ant-design/icons';
+import { Button, Input } from 'antd';
+import { useSelector } from 'react-redux'
+
 
 const Home = () => {
-    const [authorisedUser,setAuthorisedUser] = useState(false)
+
+    const { user } = useSelector(store => store.auth)
+    const [latestjobs, setLatestjobs] = useState([])
+    const [jobDetails, setJobDetails] = useState([])
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => {
+        setShow(false);
+    }
+
+    const handleShow = () => {
+        setShow(true);
+    }
+
+
     const navigate = useNavigate()
 
-    useEffect(()=>{
-        if(sessionStorage.getItem("token")){
-          setAuthorisedUser(true)
-        }
-      },[])
+    useEffect(() => {
+        getLatestJobs()
+    }, [])
 
-      const viewAllProjects =()=>{
-        const token = sessionStorage.getItem("token")
-        if (token) {   
+    // get latets jobs
+    const getLatestJobs = async () => {
+        try {
+            const result = await latestjobsAPI()
+            // console.log(result.data.jobs);
+            setLatestjobs(result.data.jobs)
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
+
+    //get job by id
+    const getJobDetails = async (jobId) => {
+        const token = sessionStorage.getItem("token");
+        if (token) {
+            const reqHeader = {
+                Authorization: `Bearer ${token}`,
+            };
+            try {
+                const result = await getJobById(jobId, reqHeader);
+                if (result.status === 200) {
+                    setJobDetails(result.data);
+                    handleShow();
+                }
+            } catch (error) {
+                console.error("Error fetching job details:", error);
+            }
+        }
+        else {
+            alert("Please Login")
+        }
+    };
+
+    // apply job
+    const applyJob = async (jobId) => {
+        const token = sessionStorage.getItem("token");
+        if (token) {
+            const reqHeader = {
+                Authorization: `Bearer ${token}`,
+            };
+            try {
+                const result = await applyJobAPI(jobId, reqHeader);
+                if (result.status === 201) {
+                    alert("Applied Successfully");
+                }
+                else if (result.status === 401) {
+                    alert("Already Applied")
+                }
+            } catch (error) {
+                console.error("Error ", error);
+            }
+        }
+        else {
+            alert("Please Login")
+        }
+    }
+
+    // view all projects
+    const viewAllJobs = () => {
+        if (user) {
             navigate('/jobs')
         }
         else {
-            console.log("No token found");
+            alert("Please Login to view all jobs")
         }
-      }
-      
-  return (
-    <>
-     <Header authorisedUser={authorisedUser}/>
-     {/* Hero section */}
-     <div className='heroSection pt-5 d-flex justify-content-center gap-5'>
-        <div className="heroContent mt-4">
-            <h1 className='mt-5 fs-1' style={{width:'600px'}}>Find a job that aligns with your interests and skills</h1>
-            <p className='mt-3 pb-3'>Thousands of jobs in all the leading sector are waiting for you.</p>
-            <div style={{width:'465px',left:"0%"}} className='mt-4 py-2 px-2 bg-white border 1px rounded'>
-              <i class="fa-solid fa-magnifying-glass mx-2"></i>
-              <input style={{width:'165px'}} className='p-1 border border-0 me-2' type="text" placeholder='Job title, Keyword...' />
-              <i class="fa-solid fa-location-dot me-2"></i>
-              <input style={{width:'100px'}} className='p-2 border border-0' type="text" placeholder='Location'/>
-              <button className='findJobBtn ms-3'>Find Job</button>
+    }
+
+    return (
+        <>
+            <Header />
+            {/* Hero Section */}
+            <div className="heroSection pt-8 flex flex-col md:flex-row justify-between items-center gap-10">
+                {/* Hero Content */}
+                <div className="w-full ms-20 md:w-1/2 text-center md:text-left">
+                    <h1 className="text-3xl md:text-4xl font-semibold">
+                        Find a job that aligns with your interests and skills
+                    </h1>
+                    <p className="mt-4 pb-4 text-gray-600">
+                        Thousands of jobs in all the leading sectors are waiting for you.
+                    </p>
+
+                    <div className="flex flex-wrap items-center gap-3 mt-4">
+                        <div className="flex items-center border rounded-lg p-2 w-full max-w-50">
+                            <i className="fa-solid fa-magnifying-glass text-gray-500 mr-2"></i>
+                            <input
+                                type="text"
+                                placeholder="Job title, Keyword..."
+                                className="outline-none w-full bg-transparent"
+                            />
+                        </div>
+
+                        <div className="flex items-center border rounded-lg p-2 w-full max-w-40">
+                            <i className="fa-solid fa-location-dot text-gray-500 mr-2"></i>
+                            <input
+                                type="text"
+                                placeholder="Location"
+                                className="outline-none w-full bg-transparent"
+                            />
+                        </div>
+
+                        <button className="bg-purple-700 text-white px-4 py-2 rounded-lg hover:bg-purple-800 transition mt-2 md:mt-0">
+                            <i className="fa-solid fa-search mr-2"></i>Find Job
+                        </button>
+                    </div>
+                </div>
+                {/* Hero Image */}
+                <div className="w-full md:w-1/2 mt-6 md:mt-0">
+                    <img
+                        src={hero}
+                        alt="Hero"
+                        className="w-full max-w-md object-cover mx-auto"
+                    />
+                </div>
             </div>
-            
-        </div>
-        <div className="heroImage">
-            <img style={{width:'400px',height:'400px'}} src={hero} alt="" />
-        </div>
-     </div>
 
-     {/* Featured */}
-     <div className='featured mt-5'>
-        <div className='text-center'>
-          <h2>Featured Jobs</h2>
-          <p>Choose jobs from the top employers and apply for the same.</p>
-        </div>
-        <div className='d-flex justify-content-center mt-5 gap-4'>
-          {/* job card */}
-            <Card style={{ width: '18rem' }}>
-                <Card.Body>
-                <Card.Title>Technical Support Specialist</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">PART-TIME salary:20,000 INR-25,000 INR</Card.Subtitle>
-                <div className='row'>
-                    <div className='col-lg-2'>
-                        <img style={{width:'50px',display:'inline'}} src={logo} alt="" />
-                    </div>
-                    <div className='col-lg-10'>
-                        <h6>Google Inc.</h6>
-                        <p>New Delhi, India</p>
-                    </div>
+            {/* Latest */}
+            <div className="featured mt-10">
+                {/* Section Title */}
+                <div className="text-center">
+                    <h2 className="text-3xl font-semibold">Latest Jobs</h2>
+                    <p className="text-gray-700 mt-2">Choose the latest jobs from employers and apply for the same.</p>
                 </div>
-                <button className='whitebtn me-3'>View Details</button>
-                <button className='violetbtn'>Apply now</button> 
-                </Card.Body>
-            </Card>
-            {/* job card */}
-            <Card style={{ width: '18rem' }}>
-                <Card.Body>
-                <Card.Title>Technical Support Specialist</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">PART-TIME salary:20,000 INR-25,000 INR</Card.Subtitle>
-                <div className='row'>
-                    <div className='col-lg-2'>
-                        <img style={{width:'50px',display:'inline'}} src={logo} alt="" />
-                    </div>
-                    <div className='col-lg-10'>
-                        <h6>Google Inc.</h6>
-                        <p>New Delhi, India</p>
-                    </div>
-                </div>
-                <button className='whitebtn me-3'>View Details</button>
-                <button className='violetbtn'>Apply now</button> 
-                </Card.Body>
-            </Card>
-            {/* job card */}
-            <Card style={{ width: '18rem' }}>
-                <Card.Body>
-                <Card.Title>Technical Support Specialist</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">PART-TIME salary:20,000 INR-25,000 INR</Card.Subtitle>
-                <div className='row'>
-                    <div className='col-lg-2'>
-                        <img style={{width:'50px',display:'inline'}} src={logo} alt="" />
-                    </div>
-                    <div className='col-lg-10'>
-                        <h6>Google Inc.</h6>
-                        <p>New Delhi, India</p>
-                    </div>
-                </div>
-                <button className='whitebtn me-3'>View Details</button>
-                <button className='violetbtn'>Apply now</button> 
-                </Card.Body>
-            </Card>
-        </div>
 
-        
-        <div className="text-center my-4">
-          <button className='border-0 bg-white text-primary text-decoration-underline' onClick={viewAllProjects}>View all</button>
-        </div>
-     </div>
+                <div className="flex flex-wrap justify-center mt-10 gap-6">
+                    {latestjobs.length > 0 &&
+                        latestjobs.map((jobs) => (
+                            <div key={jobs?._id} className="w-full sm:w-1/2 lg:w-1/4 flex justify-center">
+                                <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-sm">
+                                    <h3 className="text-xl font-semibold mb-4">{jobs?.title}</h3>
+                                    <p className="text-gray-500 mb-2">{jobs?.jobType}</p>
+                                    <p className="text-gray-500 mb-4">Salary: {jobs?.salary} LPA</p>
 
-     <p className='text-center mt-5 py-4'>Top companies hiring now</p>
-     <div className='d-flex justify-content-center align-items-center mb-5'>
-      <img className='me-5' style={{width:'70px',height:'50px'}} src={google} alt="" />
-      <img className='me-5'  style={{width:'110px',height:'40px'}} src={flipkart} alt="" />
-      <img className='me-5'  style={{width:'70px',height:'50px'}} src={ibm} alt="" />
-      <img className='me-5'  style={{width:'70px',height:'50px'}} src={microsoft} alt="" />
-      <img className='me-5'  style={{width:'70px',height:'50px'}} src={youtube} alt="" />
-     </div>
-     <Footer/>
-    </>
-  )
+                                    <div className="flex items-center mb-4">
+                                        <img className="w-12 h-12 object-cover" src={logo} alt="Company Logo" />
+                                        <div className="ml-4">
+                                            <h6 className="font-semibold">{jobs?.company?.name}</h6>
+                                            <p className="text-gray-600 text-sm">{jobs?.location}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-wrap gap-4 mt-4">
+                                        <button onClick={() => getJobDetails(jobs?._id)} className="border px-4 py-2 rounded text-purple-600 hover:bg-purple-100"> View Details
+                                        </button>
+                                        <button onClick={() => applyJob(jobs?._id)} className="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800">Apply now</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+
+                {/* View All Button */}
+                <div className="text-center my-6">
+                    <button
+                        className="border-0 bg-transparent text-purple-600 underline cursor-pointer"
+                        onClick={viewAllJobs}
+                    >
+                        View all
+                    </button>
+                </div>
+            </div>
+
+
+            {/* Job details Modal */}
+            <Modal Modal size='lg' centered
+                show={show}
+                onHide={handleClose}
+                backdrop="static"
+                keyboard={false}
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title>Job Details</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div>
+                        {
+                            jobDetails &&
+                            <div key={jobDetails._id}>
+                                <h5 className='mb-4'>{jobDetails?.title}</h5>
+                                <p>Description: {jobDetails?.description}</p>
+                                <p>Job Type: {jobDetails?.jobType}</p>
+                                <p>Experience Level: {jobDetails?.experienceLevel} years</p>
+                                <p>Location: {jobDetails?.location}</p>
+                                <p>Requirements: {jobDetails?.requirements?.join(', ')}</p>
+                                <p>Salary: {jobDetails?.salary} LPA</p>
+                                <p>Vacancy: {jobDetails?.vaccancy}</p>
+                                <p>Posted On: {new Date(jobDetails?.createdAt).toLocaleDateString()}</p>
+                            </div>
+
+                        }
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>Close</Button>
+                </Modal.Footer>
+            </Modal>
+
+            <p className='text-center text-2xl font-semibold mt-5 py-4'>Top companies hiring now</p>
+            <div className='flex flex-wrap justify-center items-center mb-5 gap-10 gap-md-5'>
+                <img className='img-fluid' style={{ width: '70px', height: 'auto' }} src={google} alt="Google" />
+                <img className='img-fluid' style={{ width: '110px', height: 'auto' }} src={flipkart} alt="Flipkart" />
+                <img className='img-fluid' style={{ width: '70px', height: 'auto' }} src={ibm} alt="IBM" />
+                <img className='img-fluid' style={{ width: '70px', height: 'auto' }} src={microsoft} alt="Microsoft" />
+                <img className='img-fluid' style={{ width: '70px', height: 'auto' }} src={youtube} alt="YouTube" />
+            </div>
+            <Footer />
+        </>
+    )
 }
 
 export default Home

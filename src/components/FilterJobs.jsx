@@ -6,75 +6,67 @@ const FilterJobs = () => {
 
   return (
     <>
-        <div className='d-flex justify-content-between align-items-center container p-2'>
-            <h5>Filter</h5>
-            <h6 className='fw-light'><>Clear all</></h6>
+       <div className="flex justify-between items-center container pb-3">
+        <h5 className="text-lg font-semibold">Filter</h5>
+        <h6 className="text-gray-600 cursor-pointer hover:underline">Clear all</h6>
+      </div>
+      
+     <div className='w-60'>
+        <div className="container">
+          <h6 className="text-md font-medium mb-5">Salary Range</h6>
+          <div className="flex flex-wrap gap-6 mb-4">
+            <div className="flex flex-col w-full md:w-1/3">
+              <label className="text-sm font-medium mb-1">Min Salary</label>
+              <input type="text" placeholder="INR" className="border rounded-lg p-1 w-full outline-none focus:ring focus:ring-purple-200" />
+            </div>
+            <div className="flex flex-col w-full md:w-1/3">
+              <label className="text-sm font-medium mb-1">Max Salary</label>
+              <input type="text" placeholder="INR" className="border rounded-lg p-1 w-full outline-none focus:ring focus:ring-purple-200" />
+            </div>
+          </div>
         </div>
-        <div className='container'>
-          <h6>Salary Range</h6>
-          <Row className="mb-4">
-          <Form.Group as={Col} md="4" controlId="validationCustom04">
-      <Form.Label>Min Salary</Form.Label>
-      <Form.Control type="text" placeholder=" INR" required />
-      <Form.Control.Feedback type="invalid">
-      </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group as={Col} md="4" controlId="validationCustom04">
-      <Form.Label>Max Salary</Form.Label>
-      <Form.Control type="text" placeholder=" INR" required />
-      <Form.Control.Feedback type="invalid">
-      </Form.Control.Feedback>
-          </Form.Group>
-          </Row>
+  
+        <hr className="my-4" />
+  
+        <div className="container">
+          <h6 className="text-md font-medium">Job Type</h6>
+          <div className="mt-2 space-y-2">
+            <div>
+              <input type="checkbox" id="all" className="mr-2" />
+              <label htmlFor="all" className="text-sm">All</label>
+            </div>
+            <div>
+              <input type="checkbox" id="full-time" className="mr-2" />
+              <label htmlFor="full-time" className="text-sm">Full-Time</label>
+            </div>
+            <div>
+              <input type="checkbox" id="part-time" className="mr-2" />
+              <label htmlFor="part-time" className="text-sm">Part-Time</label>
+            </div>
+          </div>
         </div>
-        <hr className='my-4' />
-        <div className='container'>
-          <h6>Job Type</h6>
-          <Form>
-         <div key={``}>
-          <Form.Check // prettier-ignore
-            id={`default`}
-            label={`All`}
-          />
+  
+        <hr className="my-4" />
+  
+        <div className="container">
+          <h6 className="text-md font-medium">Work Mode</h6>
+          <div className="mt-2 space-y-2">
+            <div>
+              <input type="checkbox" id="on-site" className="mr-2" />
+              <label htmlFor="on-site" className="text-sm">On-Site</label>
+            </div>
+            <div>
+              <input type="checkbox" id="remote" className="mr-2" />
+              <label htmlFor="remote" className="text-sm">Remote</label>
+            </div>
+            <div>
+              <input type="checkbox" id="hybrid" className="mr-2" />
+              <label htmlFor="hybrid" className="text-sm">Hybrid</label>
+            </div>
+          </div>
         </div>
-        <div key={``}>
-          <Form.Check // prettier-ignore
-            id={`default`}
-            label={`Full-Time`}
-          />
-        </div>
-        <div key={``}>
-          <Form.Check // prettier-ignore
-            id={`default`}
-            label={`Part-Time`}
-          />
-        </div>
-         </Form>
-        </div>
-        <hr className='my-4' />
-        <div className='container'>
-          <h6>Work Mode</h6>
-          <Form>
-         <div key={``}>
-          <Form.Check // prettier-ignore
-            id={`default`}
-            label={`On-Site`}
-          />
-        </div>
-        <div key={``}>
-          <Form.Check // prettier-ignore
-            id={`default`}
-            label={`Remote`}
-          />
-        </div>
-        <div key={``}>
-          <Form.Check // prettier-ignore
-            id={`default`}
-            label={`Hybrid`}
-          />
-        </div>
-        </Form>
-        </div>
+     </div>
+
 
     </>
   )

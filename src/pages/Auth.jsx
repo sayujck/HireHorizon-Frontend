@@ -1,35 +1,37 @@
-import React, { useEffect, useState } from 'react'
-import Form from 'react-bootstrap/Form';
+import React, { useState } from 'react'
 import loginImg from '../assets/loginImg.png'
-import { FloatingLabel } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import { loginAPI, registerAPI } from '../services/allAPI';
+import { useDispatch } from 'react-redux'
+import { setLoading, setUser } from '../redux/authSlice';
+import { toast } from 'sonner';
 
 
 const Auth = ({ insideRegister }) => {
+
   const navigate = useNavigate()
+  const dispatch = useDispatch();
+ 
   const [userInput, setUserInput] = useState({
     fullname: "", email: "", phoneNumber: "", password: "", userType: ""
   })
-  // console.log(userInput);
+
 
   // register API
   const handleRegister = async (e) => {
     e.preventDefault()
     if (userInput.fullname && userInput.email && userInput.phoneNumber && userInput.password && userInput.userType) {
       try {
-
         const result = await registerAPI(userInput)
-
         if (result.status == 200) {
-          alert(`Welcome ${result.data?.fullname}, Please login`)
+          toast.success(result.data.message)
           navigate("/login")
           setUserInput({ fullname: "", email: "", phoneNumber: "", password: "", userType: "" })
         }
         else {
           if (result.response.status == 406) {
-            alert(result.response.data)
+            toast.error(result.response.data.message)
             setUserInput({ fullname: "", email: "", phoneNumber: "", password: "" })
           }
         }
@@ -48,11 +50,13 @@ const Auth = ({ insideRegister }) => {
     e.preventDefault()
     if (userInput.email && userInput.password && userInput.userType) {
       try {
+        dispatch(setLoading(true))
         const result = await loginAPI(userInput)
         if (result.status == 200) {
+          toast.success(result.data.message)
+          dispatch(setUser(result.data.user))
           sessionStorage.setItem("user", JSON.stringify(result.data.user))
           sessionStorage.setItem("token", result.data.token)
-          alert("Login Successfull")
           setTimeout(() => {
             navigate("/")
             setUserInput({ email: "", password: "", userType: "" })
@@ -61,9 +65,14 @@ const Auth = ({ insideRegister }) => {
         }
         else {
           if (result.response.status == 404) {
-            alert(result.response.data)
-            setUserInput({ email: "", password: "", userType: "" })
+            toast.error(result.response.data.message)
           }
+          else if (result.response.status == 401) {
+            toast.error(result.response.data.message)
+          }
+
+          else if (result.response.status == 402)  
+            toast.error(result.response.data.message)
         }
 
       } catch (err) {
@@ -75,86 +84,123 @@ const Auth = ({ insideRegister }) => {
     }
   }
 
-
-
   return (
     <>
       <Header />
-      <div style={{ minHeight: '100vh', width: '100%' }} className=' align-items-center'>
-        <div className="container w-75">
-          <h3 className='mt-3 mb-4'>Login to your Account</h3>
-          <div className="card shadow">
-            <div className="row align">
-              <div className="col-lg-6">
-                <Form style={{ width: '450px' }} className='m-4 p-4 pb-2'>
-                  {
-                    insideRegister && (
-                      <>
-                        <h6>Full Name</h6>
-                        <FloatingLabel controlId="floatingInput" label="Full name" className="mb-3">
-                          <Form.Control value={userInput.fullname} onChange={e => setUserInput({ ...userInput,fullname:e.target.value })} type="text" placeholder="" />
-                        </FloatingLabel>
-                      </>
-                    )
-                  }
-                        <h6>Email ID</h6>
-                        <FloatingLabel controlId="floatingInput" label="Enter Email address" className="mb-3">
-                          <Form.Control value={userInput.email} onChange={e => setUserInput({ ...userInput,email: e.target.value })} type="email" placeholder="name@example.com" />
-                        </FloatingLabel>
-                   { insideRegister && (
-                     <>
-                        <h6 className='mt-4'>Phone Number</h6>
-                        <FloatingLabel controlId="floatingPassword" label="Enter Phone Number">
-                          <Form.Control value={userInput.phoneNumber} onChange={e => setUserInput({ ...userInput,phoneNumber: e.target.value })} type="text" placeholder="" />
-                        </FloatingLabel>
-                      </>
-                    )
-                  }
-                  <h6 className='mt-4'>Password</h6>
-                  <FloatingLabel controlId="floatingPassword" label="Enter Password">
-                    <Form.Control value={userInput.password} onChange={e => setUserInput({ ...userInput,password: e.target.value })} type="password" placeholder="Password" />
-                  </FloatingLabel>
-
-                  <div className="d-flex my-3">
-                    <Form.Check
-                      type="radio"
-                      className="me-3"
-                      id="student"
-                      value="candidate"
-                      name="userType"
-                      label="Candidate"
-                      checked={userInput.userType === "candidate"}
-                      onChange={e => setUserInput({ ...userInput, userType: e.target.value })}
-                    />
-                    <Form.Check
-                      type="radio"
-                      id="recruiter"
-                      value="recruiter"
-                      name="userType"
-                      label="Recruiter"
-                      checked={userInput.userType === "recruiter"}
-                      onChange={e => setUserInput({ ...userInput, userType: e.target.value })}
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8 px-4">
+        <div className="container max-w-4xl bg-white shadow-lg rounded-lg p-6">
+          {
+            insideRegister ?
+            <h3 className="text-2xl font-semibold mb-3">Register your account</h3>
+            :
+            <h3 className="text-2xl font-semibold">Login your account</h3>
+          }
+          <div className="flex flex-col md:flex-row items-center">
+            {/* Form Section */}
+            <div className="w-full md:w-1/2 p-4">
+              <form className="space-y-4">
+                {insideRegister &&
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Fullname</label>
+                    <input
+                      value={userInput.fullname}
+                      onChange={(e) => setUserInput({ ...userInput, fullname: e.target.value })}
+                      type="text"
+                      placeholder="Fullname"
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
                     />
                   </div>
+                }
 
-                  {
-                    insideRegister ?
-                      <div className='mt-4'>
-                        <button onClick={handleRegister} className='btn btn-primary p-2 w-100'>Register
-                        </button>
-                        <p className='mt-4'>Existing User? Please Click here to <Link to={'/login'}>Login</Link></p>
-                      </div>
-                      :
-                      <div className='mt-4'>
-                        <button onClick={handleLogin} className='btn btn-primary p-2 w-100'>Login</button>
-                        <p className='mt-4'>Don't have an account? <Link to={'/register'}>Register</Link></p>
-                      </div>
-                  }
-                </Form>
-              </div>
-              <div className="col-lg-6">
-                <img style={{ width: '400px', height: '400px' }} src={loginImg} className='p-5' alt="" />
-              </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input
+                    value={userInput.email}
+                    onChange={(e) => setUserInput({ ...userInput, email: e.target.value })}
+                    type="text"
+                    placeholder="Email address"
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+
+                {insideRegister &&
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                    <input
+                      value={userInput.phoneNumber}
+                      onChange={(e) => setUserInput({ ...userInput, phoneNumber: e.target.value })}
+                      type="text"
+                      placeholder="Phone Number"
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
+                    />
+                  </div>
+                }
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                  <input
+                    value={userInput.password}
+                    onChange={(e) => setUserInput({ ...userInput, password: e.target.value })}
+                    type="password"
+                    placeholder="Password"
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+
+                <div className="flex items-center justify-start space-x-8 mt-3">
+                  <div className="flex items-center">
+                    <input onClick={(e) => setUserInput({ ...userInput, userType: e.target.value })} type="radio" value={'candidate'} id="candidate" name="role" className="w-4 h-4 border-gray-300 focus:ring-purple-500" />
+                    <label htmlFor="candidate" className="ml-2 text-sm font-medium text-gray-700">
+                      Candidate
+                    </label>
+                  </div>
+                  <div className="flex items-center">
+                    <input onClick={(e) => setUserInput({ ...userInput, userType: e.target.value })} type="radio" value={'recruiter'} id="recruiter" name="role" className="w-4 h-4 border-gray-300 focus:ring-purple-500" />
+                    <label htmlFor="recruiter" className="ml-2 text-sm font-medium text-gray-700">
+                      Recruiter
+                    </label>
+                  </div>
+                </div>
+
+                {insideRegister ? (
+                  <div className="mt-6">
+                    <button
+                      onClick={handleRegister}
+                      className="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700 transition">
+                      Register
+                    </button>
+                    <p className="text-sm mt-4 text-center">
+                      Existing User? Please Click here to{' '}
+                      <Link to="/login" className="text-purple-600 hover:underline">
+                        Login
+                      </Link>
+                    </p>
+                  </div>
+                ) : (
+                  <div className="mt-6">
+                    <button
+                      onClick={handleLogin}
+                      className="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700 transition">
+                      Login
+                    </button>
+                    <p className="text-sm mt-4 text-center">
+                      Don't have an account?{' '}
+                      <Link to="/register" className="text-purple-600 hover:underline">
+                        Register
+                      </Link>
+                    </p>
+                  </div>
+                )}
+              </form>
+            </div>
+
+            {/* Image Section */}
+            <div className="w-full md:w-1/2 p-4 flex justify-center">
+              <img
+                src={loginImg}
+                alt="Login"
+                className="max-w-sm w-full object-contain"
+              />
             </div>
           </div>
         </div>
@@ -163,4 +209,4 @@ const Auth = ({ insideRegister }) => {
   )
 }
 
-export default Auth
+export default Auth 
