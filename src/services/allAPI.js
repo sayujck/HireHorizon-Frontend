@@ -25,3 +25,16 @@ export const getJobById = async(jobId,reqHeader)=>{
 export const applyJobAPI = async(jobId,reqBody)=>{
     return await commonAPI("GET",`${SERVER_BASE_URL}/api/v1/application/apply/${jobId}`,{},reqBody)
 }
+// register company
+export const registerCompanyAPI = async(reqBody,reqHeader)=>{
+    return await commonAPI("POST",`${SERVER_BASE_URL}/api/v1/company/register`,reqBody,reqHeader)
+}
+// get all company
+export const getAllCompanyAPI = async(reqHeader)=>{
+    return await commonAPI("GET",`${SERVER_BASE_URL}/api/v1/company/get`,{},reqHeader)
+}
+//get applied  jobs
+export const getAppliedJobAPI = async(reqHeader)=>{
+    return await commonAPI("GET",`${SERVER_BASE_URL}/api/v1/application/get`,{},reqHeader)
+}
+

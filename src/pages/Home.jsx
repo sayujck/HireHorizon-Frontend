@@ -14,6 +14,7 @@ import { applyJobAPI, getJobById, latestjobsAPI } from '../services/allAPI'
 import { SearchOutlined } from '@ant-design/icons';
 import { Button, Input } from 'antd';
 import { useSelector } from 'react-redux'
+import { toast } from 'sonner'
 
 
 const Home = () => {
@@ -68,7 +69,7 @@ const Home = () => {
             }
         }
         else {
-            alert("Please Login")
+            toast.error("Please Login")
         }
     };
 
@@ -81,18 +82,19 @@ const Home = () => {
             };
             try {
                 const result = await applyJobAPI(jobId, reqHeader);
+                console.log(result.status);
                 if (result.status === 201) {
-                    alert("Applied Successfully");
+                    toast.success(result.data.message)
                 }
                 else if (result.status === 401) {
-                    alert("Already Applied")
+                    toast.error(result.response.data.message)
                 }
             } catch (error) {
                 console.error("Error ", error);
             }
         }
         else {
-            alert("Please Login")
+            toast.error("Please Login")
         }
     }
 
@@ -102,7 +104,7 @@ const Home = () => {
             navigate('/jobs')
         }
         else {
-            alert("Please Login to view all jobs")
+            toast.error("Please Login to view all jobs")
         }
     }
 
@@ -163,7 +165,7 @@ const Home = () => {
                 </div>
 
                 <div className="flex flex-wrap justify-center mt-10 gap-6">
-                    {latestjobs.length > 0 &&
+                    {latestjobs?.length > 0 &&
                         latestjobs.map((jobs) => (
                             <div key={jobs?._id} className="w-full sm:w-1/2 lg:w-1/4 flex justify-center">
                                 <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-sm">

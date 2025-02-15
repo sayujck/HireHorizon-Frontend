@@ -82,7 +82,7 @@ const View = () => {
             }
         }
         else {
-            alert("Please Login")
+            toast.error("Please Login")
         }
     }
 

@@ -2,44 +2,34 @@ import React from 'react'
 import { Navbar } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux';
-import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Button } from './ui/button';
 import { Avatar, AvatarImage } from './ui/avatar';
-import {
-  Cloud,
-  CreditCard,
-  Github,
-  Keyboard,
-  LifeBuoy,
-  LogOut,
-  Mail,
-  MessageSquare,
-  Plus,
-  PlusCircle,
-  Settings,
-  User,
-  UserPlus,
-  Users,
-} from "lucide-react"
+import { LogOut, User } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { persistStore } from "redux-persist";
+import store from '@/redux/store';
+
 
 
 const Header = () => {
 
   const { user } = useSelector(store => store.auth)
+  const navigate = useNavigate()
+  const persistor = persistStore(store);
+  const logout = () => {
+    persistor.purge();
+    sessionStorage.clear()
+    window.location.reload();
+    navigate('/')
+  }
+  
 
 
   return (
@@ -47,11 +37,24 @@ const Header = () => {
     <Navbar className="p-2 flex justify-between items-center">
       <Link to={'/'} className='text-decoration-none text-black text-2xl font-bold ms-4'>HireHorizon</Link>
       <div className='p-2 text-lg font-semibold'>
-        <Link to={'/'} className='text-decoration-none me-8 text-black'>Home</Link>
-        <Link to={'/jobs'} className='text-decoration-none me-8 text-black'>Find Job</Link>
-        <Link to={'/postjob'} className='text-decoration-none me-8 text-black'>Post Job</Link>
-        <Link className='text-decoration-none me-8 text-black'>About Us</Link>
-        <Link className='text-decoration-none text-black'>Contact Us</Link>
+
+        {
+          user?.userType == 'recruiter' ?
+            <>
+              <Link to={'/recruiter/jobs'} className='text-decoration-none me-8 text-black'>Jobs</Link>
+              <Link to={'/recruiter/companies'} className='text-decoration-none me-8 text-black'>Companies</Link>
+              <Link className='text-decoration-none me-8 text-black'>About Us</Link>
+              <Link className='text-decoration-none text-black'>Contact Us</Link>
+            </>
+            :
+            <>
+              <Link to={'/'} className='text-decoration-none me-8 text-black'>Home</Link>
+              <Link to={'/jobs'} className='text-decoration-none me-8 text-black'>Find Job</Link>
+              <Link className='text-decoration-none me-8 text-black'>About Us</Link>
+              <Link className='text-decoration-none text-black'>Contact Us</Link>
+            </>
+
+        }
       </div>
 
       {
@@ -64,7 +67,7 @@ const Header = () => {
           <div className='p-1'>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-              <Avatar>
+                <Avatar>
                   <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
                 </Avatar>
               </DropdownMenuTrigger>
@@ -73,12 +76,12 @@ const Header = () => {
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
                     <User />
-                    <span>Profile</span>
+                    <Link to={'/profile'}>Profile</Link>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuItem>
                   <LogOut />
-                  <span>Log out</span>
+                  <button onClick={logout}>Log out</button>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
