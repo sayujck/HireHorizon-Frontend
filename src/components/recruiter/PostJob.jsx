@@ -1,76 +1,108 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
-// import { useSelector } from 'react-redux'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
-// import { toast } from 'sonner'
-// import { useNavigate } from 'react-router-dom'
-import { Loader2 } from 'lucide-react'
-import Header from '../Header'
+import { ArrowLeft, Loader2 } from 'lucide-react'
+import { getAllCompanyAPI, postJobAPI } from '@/services/allAPI'
+import { toast } from 'sonner'
+import { useNavigate } from 'react-router-dom'
 
-const companyArray = [];
 
 const PostJob = () => {
 
-    const [input, setInput] = useState({
-        title: "",
-        description: "",
-        requirements: "",
-        salary: "",
-        location: "",
-        jobType: "",
-        experience: "",
-        position: 0,
-        companyId: ""
-    });
-    const [loading, setLoading]= useState(false);
-    // const navigate = useNavigate();
+    const [jobDetails, setJobDetails] = useState({
+        title: '',
+        description: '',
+        requirements: '',
+        salary: '',
+        location: '',
+        jobType: '',
+        experience: '',
+        vacancy: '',
+        companyId: ''
+    })
+    const [allCompany, setAllCompany] = useState([])
+    const loading = false
+    const navigate = useNavigate()
 
-    // const { companies } = useSelector(store => store.company);
-    // const changeEventHandler = (e) => {
-    //     setInput({ ...input, [e.target.name]: e.target.value });
-    // };
+    const changeEventHandler = (e) => {
+        setJobDetails({ ...jobDetails, [e.target.name]: e.target.value })
+    }
+    console.log(jobDetails);
 
-    // const selectChangeHandler = (value) => {
-    //     const selectedCompany = companies.find((company)=> company.name.toLowerCase() === value);
-    //     setInput({...input, companyId:selectedCompany._id});
-    // };
+    const getCompany = async () => {
+        const token = sessionStorage.getItem('token');
+        if (token) {
+            const reqHeader = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            };
+            const res = await getAllCompanyAPI(reqHeader)
+            setAllCompany(res.data.companies);
+        }
+    }
 
-    // const submitHandler = async (e) => {
-    //     e.preventDefault();
-    //     try {
-    //         setLoading(true);
-    //         const res = await axios.post(`${JOB_API_END_POINT}/post`, input,{
-    //             headers:{
-    //                 'Content-Type':'application/json'
-    //             },
-    //             withCredentials:true
-    //         });
-    //         if(res.data.success){
-    //             toast.success(res.data.message);
-    //             navigate("/admin/jobs");
-    //         }
-    //     } catch (error) {
-    //         toast.error(error.response.data.message);
-    //     } finally{
-    //         setLoading(false);
-    //     }
-    // }
+    useEffect(() => {
+        getCompany()
+    }, [])
+
+    const postJob = async (e) => {
+        e.preventDefault()
+        console.log(jobDetails);
+        const token = sessionStorage.getItem('token');
+        if (token) {
+            const reqHeader = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            };
+            try {
+                const res = await postJobAPI(jobDetails, reqHeader)
+                if (res.status === 201) {
+                    toast.success(res.data.message);
+                    setJobDetails({
+                        title: '',
+                        description: '',
+                        requirements: '',
+                        salary: '',
+                        location: '',
+                        jobType: '',
+                        experience: '',
+                        vacancy: '',
+                        companyId: ''
+                    });
+                    navigate('/recruiter/jobs')
+                } else {
+                    toast.error(res.data.message || "Failed to post job");
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
 
     return (
-        <div>
-            <Header />
+        <>
+                <div className='flex items-center mx-80 w-screen my-5'>
+                    <Button
+                        onClick={() => navigate('/recruiter/jobs')}
+                        variant="outline"
+                        className="flex items-center gap-2 text-gray-500 font-semibold"
+                    >
+                        <ArrowLeft />
+                        <span>Back</span>
+                    </Button>
+                </div>
             <div className='flex items-center justify-center w-screen my-5'>
-                <form className='p-8 max-w-4xl border border-gray-200 shadow-lg rounded-md'>
+                <form onSubmit={postJob} className='p-8 max-w-4xl border border-gray-200 shadow-lg rounded-md'>
                     <div className='grid grid-cols-2 gap-2'>
                         <div>
                             <Label>Title</Label>
                             <Input
                                 type="text"
                                 name="title"
-                                value={input.title}
-                                // onChange={changeEventHandler}
+                                value={jobDetails.title}
+                                onChange={changeEventHandler}
                                 className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
                             />
                         </div>
@@ -79,8 +111,8 @@ const PostJob = () => {
                             <Input
                                 type="text"
                                 name="description"
-                                value={input.description}
-                                // onChange={changeEventHandler}
+                                value={jobDetails.description}
+                                onChange={changeEventHandler}
                                 className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
                             />
                         </div>
@@ -89,8 +121,8 @@ const PostJob = () => {
                             <Input
                                 type="text"
                                 name="requirements"
-                                value={input.requirements}
-                                // onChange={changeEventHandler}
+                                value={jobDetails.requirements}
+                                onChange={changeEventHandler}
                                 className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
                             />
                         </div>
@@ -99,8 +131,8 @@ const PostJob = () => {
                             <Input
                                 type="text"
                                 name="salary"
-                                value={input.salary}
-                                // onChange={changeEventHandler}
+                                value={jobDetails.salary}
+                                onChange={changeEventHandler}
                                 className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
                             />
                         </div>
@@ -109,8 +141,8 @@ const PostJob = () => {
                             <Input
                                 type="text"
                                 name="location"
-                                value={input.location}
-                                // onChange={changeEventHandler}
+                                value={jobDetails.location}
+                                onChange={changeEventHandler}
                                 className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
                             />
                         </div>
@@ -119,8 +151,8 @@ const PostJob = () => {
                             <Input
                                 type="text"
                                 name="jobType"
-                                value={input.jobType}
-                                // onChange={changeEventHandler}
+                                value={jobDetails.jobType}
+                                onChange={changeEventHandler}
                                 className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
                             />
                         </div>
@@ -129,8 +161,8 @@ const PostJob = () => {
                             <Input
                                 type="text"
                                 name="experience"
-                                value={input.experience}
-                                // onChange={changeEventHandler}
+                                value={jobDetails.experience}
+                                onChange={changeEventHandler}
                                 className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
                             />
                         </div>
@@ -138,34 +170,37 @@ const PostJob = () => {
                             <Label>No of Postion</Label>
                             <Input
                                 type="number"
-                                name="position"
-                                value={input.position}
-                                // onChange={changeEventHandler}
+                                name="vacancy"
+                                value={jobDetails.vacancy}
+                                onChange={changeEventHandler}
                                 className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
                             />
                         </div>
-                        <Select>
+                        <Select onValueChange={(value) => setJobDetails({ ...jobDetails, companyId: value })}>
                             <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="Select a Company" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectGroup>
-                                    <SelectItem value='Company'></SelectItem>
-                                </SelectGroup>
+                                {allCompany.map((company) => (
+                                    <SelectItem key={company._id} value={company._id}>
+                                        {company.name}
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
                     </div>
                     {
                         loading ?
-                        <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4 border">Post New Job</Button>
-                    } 
-                        
+                            <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4 border">Post New Job</Button>
+                    }
+
                     <p className='text-xs text-red-600 font-bold text-center my-3'>*Please register a company first, before posting a jobs</p>
 
                 </form>
             </div>
-        </div>
+        </>
     )
+
 }
 
 export default PostJob

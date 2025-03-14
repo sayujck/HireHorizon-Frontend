@@ -34,7 +34,7 @@ const Signup = () => {
                     setTimeout(() => {
                         navigate("/login")
                         setUserInput({ fullname: "", email: "", phoneNumber: "", password: "", userType: "" })
-                    }, 2000);
+                    }, 1000);
                     toast.success(result.data.message)     
                 }
                 else {
@@ -58,7 +58,6 @@ const Signup = () => {
 
     return (
         <>
-            <Header />
             <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8 px-4">
                 <div className="container max-w-4xl bg-white shadow-lg rounded-lg p-6">
                     <h3 className="text-2xl font-semibold">Register your account</h3>
@@ -73,7 +72,7 @@ const Signup = () => {
                                         onChange={(e) => setUserInput({ ...userInput, fullname: e.target.value })}
                                         type="text"
                                         placeholder="Fullname"
-                                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
+                                        className="w-full  p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
                                     />
                                 </div>
                                 <div>
@@ -83,7 +82,7 @@ const Signup = () => {
                                         onChange={(e) => setUserInput({ ...userInput, email: e.target.value })}
                                         type="text"
                                         placeholder="Email address"
-                                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
+                                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
                                     />
                                 </div>
                                 <div>
@@ -93,7 +92,7 @@ const Signup = () => {
                                         onChange={(e) => setUserInput({ ...userInput, phoneNumber: e.target.value })}
                                         type="text"
                                         placeholder="Phone Number"
-                                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
+                                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
                                     />
                                 </div>
 
@@ -104,7 +103,7 @@ const Signup = () => {
                                         onChange={(e) => setUserInput({ ...userInput, password: e.target.value })}
                                         type="password"
                                         placeholder="Password"
-                                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
+                                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
                                     />
                                 </div>
 
@@ -144,7 +143,7 @@ const Signup = () => {
                             <img
                                 src={loginImg}
                                 alt="Login"
-                                className="max-w-sm w-full object-contain"
+                                className="max-w-sm h-80 w-full object-contain"
                             />
                         </div>
                     </div>

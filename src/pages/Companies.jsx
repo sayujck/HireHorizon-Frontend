@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { Input } from '../ui/input'
-import { Button } from '../ui/button'
-import CompaniesTable from './CompaniesTable'
+import { useEffect, useState } from 'react'
+import { Input } from '../components/ui/input'
+import { Button } from '../components/ui/button'
+import CompaniesTable from '../components/recruiter/CompaniesTable'
 import { useNavigate } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import Header from '../Header'
+import { useDispatch } from 'react-redux'
 import { getAllCompanyAPI } from '@/services/allAPI'
 import { setCompanies, setSearchQuery } from '@/redux/companySlice'
 
@@ -41,8 +40,7 @@ const Companies = () => {
 
 
     return (
-        <div>
-            <Header />
+        <>
             <div className='max-w-6xl mx-auto my-10'>
                 <div className='flex items-center justify-between my-5'>
                     <Input
@@ -50,11 +48,11 @@ const Companies = () => {
                         placeholder="Filter by company name"
                         onChange={(e) => setInput(e.target.value)}
                     />
-                    <Button onClick={() => navigate("/recruiter/companies/create")}>New Company</Button>
+                    <Button onClick={() => navigate("/recruiter/companies/create")} className='border-1 bg-purple-700 text-white'>New Company</Button>
                 </div>
                 <CompaniesTable />
             </div>
-        </div>
+        </>
     )
 }
 

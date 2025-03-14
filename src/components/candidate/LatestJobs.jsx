@@ -1,49 +1,44 @@
 import React, { useEffect, useState } from 'react'
-import logo from '../assets/logo.svg'
-import { alljobsAPI, applyJobAPI, getJobById } from '../services/allAPI';
+import { useNavigate } from 'react-router-dom'
+import { applyJobAPI, getJobById, latestjobsAPI } from '../../services/allAPI'
+import { useSelector } from 'react-redux'
+import { toast } from 'sonner'
+import logo from '../../assets/logo.svg'
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { toast } from 'sonner';
 
+const LatestJobs = () => {
 
-const View = () => {
-
-    const [alljobs, setAlljobs] = useState([])
+    const { user } = useSelector(store => store.auth)
+    const [latestjobs, setLatestjobs] = useState([])
     const [jobDetails, setJobDetails] = useState([])
-
 
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
+
+    const navigate = useNavigate()
+
     useEffect(() => {
-        getAllJobs()
+        getLatestJobs()
     }, [])
 
-
-    // get all jobs
-    const getAllJobs = async () => {
-        const token = sessionStorage.getItem("token")
-        if (token) {
-            const reqHeader = {
-                "Authorization": `Bearer ${token}`
-            }
-            try {
-                const result = await alljobsAPI(reqHeader);
-                if (result.status == 200) {
-                    setAlljobs(result.data.jobs)
-                }
-
-            } catch (error) {
-                console.log(error);
-
-            }
+    // get latets jobs
+    const getLatestJobs = async () => {
+        try {
+            const result = await latestjobsAPI()
+            // console.log(result.data.jobs);
+            setLatestjobs(result.data.jobs)
+        }
+        catch (err) {
+            console.log(err);
         }
     }
 
-    // get job details by id
+    //get job by id
     const getJobDetails = async (jobId) => {
         const token = sessionStorage.getItem("token");
         if (token) {
@@ -54,10 +49,14 @@ const View = () => {
                 const result = await getJobById(jobId, reqHeader);
                 if (result.status === 200) {
                     setJobDetails(result.data);
+                    handleOpen();
                 }
             } catch (error) {
                 console.error("Error fetching job details:", error);
             }
+        }
+        else {
+            toast.error("Please Login")
         }
     };
 
@@ -86,47 +85,65 @@ const View = () => {
         }
     }
 
+    // view all jobs
+    const viewAllJobs = () => {
+        if (user) {
+            navigate('/jobs')
+        }
+        else {
+            toast.error("Please Login to view all jobs")
+        }
+    }
+
 
     return (
         <>
-            <div>
-                {/* All jobs */}
-                <div className="flex justify-between items-center container">
-                    <h5 className='m-0 text-2xl font-semibold'>All Jobs</h5>
+            <div className="featured mt-10">
+                {/* Section Title */}
+                <div className="text-center">
+                    <h2 className="text-3xl font-semibold">Latest Jobs</h2>
+                    <p className="text-gray-700 mt-2">Choose the latest jobs from employers and apply for the same.</p>
                 </div>
-                <div className="container mt-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {
-                            alljobs.length > 0 ? (
-                                alljobs.map((jobs) => (
-                                    <div key={jobs?._id} className="p-4 bg-white shadow-lg rounded-lg">
-                                        <div className="mb-4">
-                                            <h3 className="text-xl font-semibold">{jobs?.title}</h3>
-                                            <p className="text-gray-500 mb-2">{jobs?.jobType}</p>
-                                            <p className="text-gray-600">Salary: {jobs?.salary} LPA</p>
-                                        </div>
-                                        <div className="flex items-center gap-4 mb-4">
-                                            <img className="w-12 h-12 object-cover" src={logo} alt="Company Logo" />
-                                            <div>
-                                                <h6 className="text-lg font-medium">{jobs?.company?.name}</h6>
-                                                <p className="text-sm text-gray-500">{jobs?.location}</p>
-                                            </div>
-                                        </div>
-                                        <div className="flex flex-col gap-3">
-                                            <button onClick={() => { getJobDetails(jobs?._id), handleOpen() }} className="w-full py-2 px-4 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition">View Details</button>
-                                            <button onClick={() => applyJob(jobs?._id)} className="w-full py-2 px-4 bg-purple-800 text-white rounded-md hover:bg-purple-700 transition">Apply Now</button>
+
+                <div className="flex flex-wrap justify-center mt-10 gap-6">
+                    {latestjobs?.length > 0 &&
+                        latestjobs.map((jobs) => (
+                            <div key={jobs?._id} className="w-full sm:w-1/2 lg:w-1/4 flex justify-center">
+                                <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-sm">
+                                    <h3 className="text-xl font-semibold mb-4">{jobs?.title}</h3>
+                                    <p className="text-gray-500 mb-2">{jobs?.jobType}</p>
+                                    <p className="text-gray-500 mb-4">Salary: {jobs?.salary} LPA</p>
+
+                                    <div className="flex items-center mb-4">
+                                        <img className="w-12 h-12 object-cover" src={logo} alt="Company Logo" />
+                                        <div className="ml-4">
+                                            <h6 className="font-semibold">{jobs?.company?.name}</h6>
+                                            <p className="text-gray-600 text-sm">{jobs?.location}</p>
                                         </div>
                                     </div>
-                                ))
-                            ) : (
-                                <div className="text-center text-gray-500">No jobs have been posted yet...</div>
-                            )
-                        }
-                    </div>
+
+                                    <div className="flex flex-wrap gap-4 mt-4">
+                                        <button onClick={() => getJobDetails(jobs?._id)} className="border px-4 py-2 rounded text-purple-600 hover:bg-purple-100"> View Details
+                                        </button>
+                                        <button onClick={() => applyJob(jobs?._id)} className="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800">Apply now</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+
+                {/* View All Button */}
+                <div className="text-center my-6">
+                    <button
+                        className="border-0 bg-transparent text-purple-600 underline cursor-pointer"
+                        onClick={viewAllJobs}
+                    >
+                        View all
+                    </button>
                 </div>
             </div>
-
-            <div>
+            <>
                 {/* Job details Modal */}
                 <Modal
                     open={open}
@@ -161,7 +178,10 @@ const View = () => {
                                         <span className="font-semibold">Salary:</span> {jobDetails?.salary} LPA
                                     </p>
                                     <p className="text-sm text-gray-600">
-                                        <span className="font-semibold">Vacancy:</span> {jobDetails?.vaccancy}
+                                        <span className="font-semibold">Vacancy:</span> {jobDetails?.vacancy}
+                                    </p>
+                                    <p className="text-sm text-gray-600">
+                                        <span className="font-semibold">Applicants:</span> {jobDetails?.applications?.length}
                                     </p>
                                     <p className="text-sm text-gray-600">
                                         <span className="font-semibold">Posted On:</span> {new Date(jobDetails?.createdAt).toLocaleDateString()}
@@ -184,9 +204,10 @@ const View = () => {
                         </Box>
                     </Box>
                 </Modal>
-            </div>
+            </>
+
         </>
     )
 }
 
-export default View
+export default LatestJobs

@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import loginImg from '../assets/loginImg.png'
 import { Link, useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
 import { loginAPI } from '../services/allAPI';
 import { useDispatch, useSelector } from 'react-redux'
 import { setLoading, setUser } from '../redux/authSlice';
@@ -40,7 +39,7 @@ const Login = () => {
                         else
                         navigate("/")
                         setUserInput({ email: "", password: "", userType: "" })
-                    }, 2000);
+                    }, 1000);
                     toast.success(result.data.message)
                     
                 }
@@ -70,11 +69,11 @@ const Login = () => {
 
     return (
         <>
-            <Header />
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8 px-4">
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
                 <div className="container max-w-4xl bg-white shadow-lg rounded-lg p-6">
-                    <h3 className="text-2xl font-semibold">Login your account</h3>
+                    <h3 className="text-2xl py-2 font-semibold">Login your account</h3>
                     <div className="flex flex-col md:flex-row items-center">
+
                         {/* Form Section */}
                         <div className="w-full md:w-1/2 pt-0 p-4">
                             <form className="space-y-4">
@@ -85,7 +84,7 @@ const Login = () => {
                                         onChange={(e) => setUserInput({ ...userInput, email: e.target.value })}
                                         type="text"
                                         placeholder="Email address"
-                                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
+                                        className="w-full p-2 border outline-none border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
                                     />
                                 </div>
 
@@ -96,7 +95,7 @@ const Login = () => {
                                         onChange={(e) => setUserInput({ ...userInput, password: e.target.value })}
                                         type="password"
                                         placeholder="Password"
-                                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
+                                        className="w-full p-2 border outline-none border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500"
                                     />
                                 </div>
 
@@ -141,9 +140,10 @@ const Login = () => {
                             <img
                                 src={loginImg}
                                 alt="Login"
-                                className="max-w-sm w-full object-contain"
+                                className="max-w-sm h-75 w-full object-contain"
                             />
                         </div>
+
                     </div>
                 </div>
             </div>
