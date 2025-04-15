@@ -5,9 +5,9 @@ import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getCompanyByIdAPI, updateCompanyByIdAPI } from '@/services/allAPI';
-import { toast } from 'sonner';
 import { useDispatch } from 'react-redux';
 import { setSingleCompany } from '@/redux/companySlice';
+import toast from 'react-hot-toast';
 
 const EditCompany = () => {
     const navigate = useNavigate();
@@ -52,7 +52,7 @@ const EditCompany = () => {
     const changeFileHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.files[0] });
     };
-    
+
     const submitHandler = async (e) => {
         e.preventDefault();
         const formData = new FormData();
@@ -87,53 +87,54 @@ const EditCompany = () => {
 
     return (
 
-        <div className="max-w-xl mx-auto my-10">
-            <Button
-                onClick={() => navigate('/recruiter/companies')}
-                variant="outline"
-                className="flex items-center gap-2 text-gray-500 font-semibold"
-            >
-                <ArrowLeft />
-                <span>Back</span>
-            </Button>
-            <form onSubmit={submitHandler}>
-                <div className="flex items-center gap-5 p-8">
-
-                    <h1 className="font-bold text-xl">Company Details</h1>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <Label>Company Name</Label>
-                        <Input type="text" name="name" value={input.name || ''} onChange={changeEventHandler} />
+        <>
+            <div className='ms-10 mt-5'>
+                <Button
+                    onClick={() => navigate('/recruiter/companies')}
+                    variant="outline"
+                    className="flex items-center gap-2 text-black font-semibold"
+                >
+                    <ArrowLeft />
+                    <span>Back</span>
+                </Button>
+            </div>
+            <div className='max-w-xl mx-auto p-5'>
+                <form onSubmit={submitHandler}>
+                    <h1 className="font-bold text-xl mt-5 py-5">Company Details</h1>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <Label>Company Name</Label>
+                            <Input type="text" name="name" value={input.name || ''} onChange={changeEventHandler} />
+                        </div>
+                        <div>
+                            <Label>Description</Label>
+                            <Input type="text" name="description" value={input.description || ''} onChange={changeEventHandler} />
+                        </div>
+                        <div>
+                            <Label>Website</Label>
+                            <Input type="text" name="website" value={input.website || ''} onChange={changeEventHandler} />
+                        </div>
+                        <div>
+                            <Label>Location</Label>
+                            <Input type="text" name="location" value={input.location || ''} onChange={changeEventHandler} />
+                        </div>
+                        <div>
+                            <Label>Logo</Label>
+                            <Input name='logo' type="file" accept="image/*" onChange={changeFileHandler} />
+                        </div>
                     </div>
-                    <div>
-                        <Label>Description</Label>
-                        <Input type="text" name="description" value={input.description || ''} onChange={changeEventHandler} />
-                    </div>
-                    <div>
-                        <Label>Website</Label>
-                        <Input type="text" name="website" value={input.website || ''} onChange={changeEventHandler} />
-                    </div>
-                    <div>
-                        <Label>Location</Label>
-                        <Input type="text" name="location" value={input.location || ''} onChange={changeEventHandler} />
-                    </div>
-                    <div>
-                        <Label>Logo</Label>
-                        <Input name='logo' type="file" accept="image/*" onChange={changeFileHandler} />
-                    </div>
-                </div>
-                {loading ? (
-                    <Button disabled className="w-full my-4 bg-gray-800 text-white border">
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
-                    </Button>
-                ) : (
-                    <Button type="submit" className="w-full bg-black text-white my-4 border">
-                        Update
-                    </Button>
-                )}
-            </form>
-        </div>
+                    {loading ? (
+                        <Button disabled className="w-full mt-8 bg-purple-800 text-white border">
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
+                        </Button>
+                    ) : (
+                        <Button type="submit" className="w-full mt-8 bg-purple-700 text-white border">
+                            Update
+                        </Button>
+                    )}
+                </form>
+            </div>
+        </>
     );
 };
 

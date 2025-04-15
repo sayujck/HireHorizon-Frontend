@@ -36,31 +36,39 @@ const AppliedJobs = () => {
 
     return (
         <>
-            <h4 className='text-2xl font-semibold mb-4'>Applied Jobs</h4>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Date</TableCell>
-                            <TableCell>Job Role</TableCell>
-                            <TableCell>Company</TableCell>
-                            <TableCell>Status</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {appliedJobs?.map((job) => (
-                            <TableRow
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
-                                <TableCell component="th" scope="row">{job?.createdAt.slice(0, 10)}</TableCell>
-                                <TableCell>{job?.job?.title}</TableCell>
-                                <TableCell>{job?.job?.company.name}</TableCell>
-                                <TableCell><Badge variant="outline">{job?.status}</Badge></TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <h4 className='p-4 text-2xl font-semibold mb-4'>Applied Jobs</h4>
+            {
+                appliedJobs.length > 0 ? (
+                    <TableContainer component={Paper}>
+                        <Table sx={{ maxWidth: 1240}} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell sx={{fontWeight:700}}>Date</TableCell>
+                                    <TableCell sx={{fontWeight:700}}>Job Role</TableCell>
+                                    <TableCell sx={{fontWeight:700}}>Company</TableCell>
+                                    <TableCell sx={{fontWeight:700}}>Status</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {appliedJobs?.map((job) => (
+                                    <TableRow
+                                        key={job._id}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <TableCell component="th" scope="row">{job?.createdAt.slice(0, 10)}</TableCell>
+                                        <TableCell>{job?.job?.title}</TableCell>
+                                        <TableCell>{job?.job?.company.name}</TableCell>
+                                        <TableCell><Badge className={`${job?.status === "rejected" ? 'bg-red-400 text-white' : job.status === 'pending' ? 'bg-purple-700 text-white' : 'bg-green-400 text-white'}`} variant="outline">{job?.status}</Badge></TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                ) : (
+                    <div className='text-lg m-5' >Not applied for any jobs yet</div>
+                )
+            }
+
         </>
     )
 }

@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { applyJobAPI, getJobById, latestjobsAPI } from '../../services/allAPI'
 import { useSelector } from 'react-redux'
-import { toast } from 'sonner'
 import logo from '../../assets/logo.svg'
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
+import toast from 'react-hot-toast'
 
 const LatestJobs = () => {
 
@@ -30,7 +30,6 @@ const LatestJobs = () => {
     const getLatestJobs = async () => {
         try {
             const result = await latestjobsAPI()
-            // console.log(result.data.jobs);
             setLatestjobs(result.data.jobs)
         }
         catch (err) {
@@ -69,7 +68,6 @@ const LatestJobs = () => {
             };
             try {
                 const result = await applyJobAPI(jobId, reqHeader);
-                console.log(result.status);
                 if (result.status === 201) {
                     toast.success(result.data.message)
                 }
@@ -91,7 +89,7 @@ const LatestJobs = () => {
             navigate('/jobs')
         }
         else {
-            toast.error("Please Login to view all jobs")
+            toast.error("Please login to view all jobs")
         }
     }
 
@@ -107,28 +105,39 @@ const LatestJobs = () => {
 
                 <div className="flex flex-wrap justify-center mt-10 gap-6">
                     {latestjobs?.length > 0 &&
-                        latestjobs.map((jobs) => (
-                            <div key={jobs?._id} className="w-full sm:w-1/2 lg:w-1/4 flex justify-center">
-                                <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-sm">
-                                    <h3 className="text-xl font-semibold mb-4">{jobs?.title}</h3>
-                                    <p className="text-gray-500 mb-2">{jobs?.jobType}</p>
-                                    <p className="text-gray-500 mb-4">Salary: {jobs?.salary} LPA</p>
-
-                                    <div className="flex items-center mb-4">
-                                        <img className="w-12 h-12 object-cover" src={logo} alt="Company Logo" />
-                                        <div className="ml-4">
-                                            <h6 className="font-semibold">{jobs?.company?.name}</h6>
-                                            <p className="text-gray-600 text-sm">{jobs?.location}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex flex-wrap gap-4 mt-4">
-                                        <button onClick={() => getJobDetails(jobs?._id)} className="border px-4 py-2 rounded text-purple-600 hover:bg-purple-100"> View Details
-                                        </button>
-                                        <button onClick={() => applyJob(jobs?._id)} className="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800">Apply now</button>
-                                    </div>
+                        latestjobs.map((job) => (
+                            <div key={job?._id} className="flex flex-col p-5 w-65 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all h-full">
+                            <div className="mb-2 min-h-[3rem] flex flex-col">
+                                <h3 className="text-lg font-semibold leading-tight line-clamp-2 mb-2">{job?.title}</h3>
+                                <div className="flex flex-wrap gap-1 mt-auto">
+                                    <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-purple-50 text-purple-700">
+                                        {job?.jobType}
+                                    </span>
+                                    <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-green-50 text-green-800">
+                                        {job?.salary} LPA
+                                    </span>
                                 </div>
                             </div>
+
+                            <div className="flex items-center gap-3 mb-2 min-h-[3.5rem]">
+                                <div className="flex-shrink-0">
+                                    <img
+                                        className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                                        src={job?.company?.logo}
+                                        alt="logo"
+                                    />
+                                </div>
+                                <div className="min-w-0">
+                                    <h6 className="text-sm font-medium truncate">{job?.company?.name}</h6>
+                                    <p className="text-xs text-gray-500 truncate">{job?.location}</p>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-2">
+                                <button onClick={() => { getJobDetails(job?._id); handleOpen(); }} className="w-full py-2 px-2 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50" >View Details</button>
+                                <button onClick={() => applyJob(job?._id)} className="w-full py-2 px-2 text-sm bg-purple-700 text-white rounded-md hover:bg-purple-800">Apply Now</button>
+                            </div>
+                        </div>
                         ))
                     }
                 </div>
@@ -143,22 +152,22 @@ const LatestJobs = () => {
                     </button>
                 </div>
             </div>
+            {/* Job details Modal */}
             <>
-                {/* Job details Modal */}
                 <Modal
                     open={open}
                     onClose={handleClose}
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                 >
-                    <Box className="w-4/5 md:w-3/5 max-w-3xl mx-auto bg-gradient-to-br from-blue-50 to-purple-50 shadow-2xl p-8 rounded-xl border border-gray-100">
+                    <Box className="w-4/5 md:w-3/5 max-w-3xl mx-auto bg-white shadow-2xl p-8 rounded-xl border border-gray-100 mt-10">
                         <Typography
                             id="modal-modal-description"
                             className="mb-6  text-base text-gray-700"
                         >
                             {jobDetails ? (
                                 <div className="space-y-4 mt-4">
-                                    <h5 className="font-semibold text-xl text-blue-800">{jobDetails?.title}</h5>
+                                    <h5 className="font-semibold text-xl text-purple-800">{jobDetails?.title}</h5>
                                     <p className="text-sm text-gray-600">
                                         <span className="font-semibold">Description:</span> {jobDetails?.description}
                                     </p>
@@ -166,7 +175,7 @@ const LatestJobs = () => {
                                         <span className="font-semibold">Job Type:</span> {jobDetails?.jobType}
                                     </p>
                                     <p className="text-sm text-gray-600">
-                                        <span className="font-semibold">Experience Level:</span> {jobDetails?.experienceLevel} years
+                                        <span className="font-bold text-md">Experience Level:</span> {jobDetails?.experienceLevel} years
                                     </p>
                                     <p className="text-sm text-gray-600">
                                         <span className="font-semibold">Location:</span> {jobDetails?.location}
@@ -194,13 +203,11 @@ const LatestJobs = () => {
 
                         {/* Close Button */}
                         <Box className="text-right">
-                            <Button
-                                variant="contained"
-                                onClick={handleClose}
-                                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 px-6 py-2 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105"
-                            >
+                            <button
+                                className='bg-purple-700 text-white px-4 py-2 rounded-md hover:bg-purple-800'
+                                onClick={handleClose}>
                                 Close
-                            </Button>
+                            </button>
                         </Box>
                     </Box>
                 </Modal>

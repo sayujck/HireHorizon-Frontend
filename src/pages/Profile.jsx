@@ -4,12 +4,14 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Mail, Phone } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProfileAPI } from '@/services/allAPI';
-import { toast } from 'sonner';
 import { setUser } from '@/redux/authSlice';
 import { Loader2 } from "lucide-react"
+import { assets } from '@/assets/assets'
+import toast from 'react-hot-toast';
+import { Call } from '@mui/icons-material';
 
 const Profile = () => {
 
@@ -34,10 +36,7 @@ const Profile = () => {
 
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value })
-        console.log(input);
     }
-
-
     const fileChangeHandler = (e) => {
         const { name, files } = e.target;
         setInput((prev) => ({
@@ -45,7 +44,6 @@ const Profile = () => {
             [name]: files.length > 0 ? files[0] : prev[name],
         }));
     };
-
 
     // update profile
     const updateProfile = async () => {
@@ -68,7 +66,6 @@ const Profile = () => {
             if (input.resume && typeof input.resume !== "string") {
                 formData.append("resume", input.resume);
             }
-            console.log(formData);
 
             try {
                 const result = await updateProfileAPI(formData, reqHeader)
@@ -91,111 +88,63 @@ const Profile = () => {
 
         <>
             {/* Profile Section */}
-            <div className="container mx-5">
-                <div className="flex flex-col lg:flex-row">
+            <div className="container p-2 bg-white">
+                <h1 className='text-xl font-bold text-purple-800 ms-4 mb-5 md:ms-10 md:text-2xl'>User Profile</h1>
+                <div className="flex gap-3 md:pb-10">
 
-                    <div className="lg:w-1/4 ms-10 p-5 flex flex-col items-start">
-                        <img width={'100px'} height={'100px'}
-                            src={user.profile.profilePic ? user.profile.profilePic : "https://i.pinimg.com/736x/b1/33/4f/b1334f43d458b7a3794cd239928370c7.jpg"}
+                    <div className="flex flex-col items-center w-1/2 md:w-1/4">
+                        <img width={'120px'} height={'120px'}
+                            src={user.profile.profilePic ? user.profile.profilePic : assets.profile_icon}
                             alt="avatar"
-                            className="rounded-full  w-25 h-25 mb-1"
+                            className="rounded-full border-2 border-gray-300"
                         />
-                        <p className="text-lg font-medium ">{user?.fullname}</p>
-                        <p className="text-gray-500 text-sm mb-4">{user?.profile.bio}</p>
+                        <h2 className="text-xl font-semibold mt-4">{user?.fullname}</h2>
+                        <p className="text-gray-600 text-sm mb-4 text-center">{user?.profile.bio}</p>
 
-                        <Dialog open={open} onOpenChange={setOpen}>
+                        <Dialog open={open} onOpenChange={setOpen} >
                             <DialogTrigger asChild>
-                                <Button className="bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition" variant="outline">Edit Profile</Button>
+                                <Button className="bg-purple-700 text-white px-4 py-2 rounded-md hover:bg-purple-800 transition">Edit Profile</Button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[425px]">
                                 <DialogHeader>
-                                    <DialogTitle>Edit profile</DialogTitle>
+                                    <DialogTitle>Edit Profile</DialogTitle>
                                     <DialogDescription>
-                                        Make changes to your profile here.
+                                        Update your profile information below.
                                     </DialogDescription>
                                 </DialogHeader>
                                 <div className="grid gap-4 py-4 ">
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                        <Label className="text-right">
-                                            Name
-                                        </Label>
-                                        <Input
-                                            name="fullname"
-                                            defaultValue={user?.fullname}
-                                            className="col-span-3 "
-                                            onChange={changeEventHandler}
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                        <Label className="text-right">
-                                            Email
-                                        </Label>
-                                        <Input
-                                            name="email"
-                                            defaultValue={user?.email}
-                                            className="col-span-3 "
-                                            onChange={changeEventHandler}
-                                        />
-                                    </div>
-
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                        <Label className="text-right">
-                                            Bio
-                                        </Label>
-                                        <Input
-                                            name="bio"
-                                            defaultValue={user?.profile.bio}
-                                            className="col-span-3"
-                                            onChange={changeEventHandler}
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                        <Label className="text-right">
-                                            Phone
-                                        </Label>
-                                        <Input
-                                            name="phoneNumber"
-                                            defaultValue={user?.phoneNumber}
-                                            className="col-span-3"
-                                            onChange={changeEventHandler}
-                                        />
-                                    </div>
-                                    <div className="grid w-100 max-w-95 items-center">
-                                        <div className='flex items-center ms-11 gap-2.5'>
-                                            <Label htmlFor="picture">Profile</Label>
+                                    {['fullname', 'email', 'bio', 'phone', 'skills'].map((field, index) => (
+                                        <div key={index} className="grid grid-cols-4 items-center gap-4">
+                                            <Label className="text-right capitalize">{field}</Label>
                                             <Input
-                                                id="picture"
-                                                type="file"
-                                                name="profilePic"
-                                                accept="image/png, image/jpg, image/jpeg"
-                                                onChange={fileChangeHandler}
+                                                name={field}
+                                                defaultValue={user[field] ||  user.profile[field] || ''}
+                                                className="col-span-3"
+                                                onChange={changeEventHandler}
                                             />
                                         </div>
-
-                                    </div>
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                        <Label className="text-right">
-                                            Skills
-                                        </Label>
+                                    ))}
+                                    <div className="flex items-center gap-2">
+                                        <Label htmlFor="picture" className='text-center w-24'>Profile Picture</Label>
                                         <Input
-                                            name="skills"
-                                            defaultValue={skills}
-                                            className="col-span-3"
-                                            onChange={changeEventHandler}
+                                            id="picture"
+                                            type="file"
+                                            className="w-70"
+                                            name="profilePic"
+                                            accept="image/png, image/jpg, image/jpeg"
+                                            onChange={fileChangeHandler}
                                         />
                                     </div>
-                                    <div className="grid w-100 max-w-95 items-center gap-1.5">
-                                        <div className='flex items-center ms-8 gap-2.5'>
-                                            <Label htmlFor="resume">Resume</Label>
-                                            <Input
-                                                id="resume"
-                                                type="file"
-                                                name="resume"
-                                                accept="application/pdf" // Restrict file type to PDF
-                                                onChange={fileChangeHandler}
-                                            />
-                                        </div>
-
+                                    <div className="flex items-center gap-3">
+                                        <Label htmlFor="resume" className='text-right w-23'>Resume</Label>
+                                        <Input
+                                            id="resume"
+                                            type="file"
+                                            className="w-70"
+                                            name="resume"
+                                            accept="application/pdf"
+                                            onChange={fileChangeHandler}
+                                        />
                                     </div>
                                 </div>
                                 <DialogFooter>
@@ -203,44 +152,52 @@ const Profile = () => {
                                         isLoading ?
                                             <Button disabled>
                                                 <Loader2 className="animate-spin" />
-                                                Updating
+                                                Updating...
                                             </Button>
                                             :
-                                            <Button onClick={updateProfile} className='bg-black text-white' type="submit">
-                                                Save changes
+                                            <Button onClick={updateProfile} className='bg-purple-700 hover:bg-purple-800 text-white' type="submit">
+                                                Save Changes
                                             </Button>
                                     }
-
                                 </DialogFooter>
                             </DialogContent>
                         </Dialog>
+
                     </div>
 
-                    <div className="lg:w-3/4 m-4 p-5">
-                        <div className="mb-6">
-                            <div className='flex items-center gap-2 my-2'>
-                                <Mail />
-                                <p className="text-md">{user?.email}</p>
-                            </div>
-                            <div className='flex items-center gap-2 my-2'>
-                                <Phone />
-                                <p className="text-md">{user?.phoneNumber}</p>
-                            </div>
-                            <div className="mb-6">
-                                <h6 className="text-lg font-semibold mb-2">Skills</h6>
-                                <div className="flex flex-wrap gap-2 w-[60%]">
-                                    {skillsArray?.map((skill, index) => (
-                                        <span
-                                            key={index}
-                                            className="bg-gray-500 text-white border px-3 py-1 rounded-full text-sm"
-                                        >
-                                            {skill}
-                                        </span>
-                                    ))}
-                                </div>
+                    <div className="w-1/2 py-4 md:w-3/4">
+                        <div className='flex items-center gap-2 my-2'>
+                            <Mail className="text-gray-600" />
+                            <p className="text-md">{user?.email}</p>
+                        </div>
+                        <div className='flex items-center gap-1 mb-5'>
+                            <Call className=" text-gray-600" />
+                            <p className="text-md">{user?.phoneNumber}</p>
+                        </div>
+                        <div className="mb-3 w-100">
+                            <h6 className="text-lg font-semibold pb-2">Skills</h6>
+                            <div className="flex flex-wrap gap-2">
+                                {skillsArray?.map((skill, index) => (
+                                    <span
+                                        key={index}
+                                        className="bg-purple-700 text-white border px-2.5 py-0.5 rounded-full text-sm"
+                                    >
+                                        {skill}
+                                    </span>
+                                ))}
                             </div>
                         </div>
 
+                        <div>
+                            <Label className="text-lg font-semibold flex">Resume </Label>
+                            {user?.profile?.resume ? (
+                                <a target='_blank' href={user?.profile?.resume} className='text-blue-500 hover:underline cursor-pointer'>
+                                    {user?.profile?.resumeName}
+                                </a>
+                            ) : (
+                                <span className="text-gray-500">Not Available</span>
+                            )}
+                        </div>
 
                     </div>
 
@@ -250,7 +207,7 @@ const Profile = () => {
             {/* Applied Jobs */}
             {
                 user?.userType === "candidate" &&
-                <div className="container m-5 px-5">
+                <div className="container px-5">
                     <AppliedJobs />
                 </div>
             }

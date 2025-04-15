@@ -1,30 +1,31 @@
-import React, { useState } from 'react'
-import loginImg from '../assets/loginImg.png'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
 import { registerAPI } from '../services/allAPI';
 import { useDispatch, useSelector } from 'react-redux'
-import { setLoading, setUser } from '../redux/authSlice';
-import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { setLoading } from '../redux/authSlice';
+import toast from 'react-hot-toast';
+import { assets } from '@/assets/assets';
+
 
 
 const Signup = () => {
 
     const navigate = useNavigate()
     const dispatch = useDispatch();
-    const { loading } = useSelector(store => store.auth)
+    const { user } =  useSelector(store=>store.auth)
 
     const [userInput, setUserInput] = useState({
         fullname: "", email: "", phoneNumber: "", password: "", userType: ""
     })
 
+    useEffect(() => {
+        if (user) {
+            navigate('/')
+        }
+    }, [])
 
-    // register API
+    // register
     const handleRegister = async (e) => {
-        console.log(userInput);
-        
         e.preventDefault()
         if (userInput.fullname && userInput.email && userInput.phoneNumber && userInput.password && userInput.userType) {
             try {
@@ -35,7 +36,7 @@ const Signup = () => {
                         navigate("/login")
                         setUserInput({ fullname: "", email: "", phoneNumber: "", password: "", userType: "" })
                     }, 1000);
-                    toast.success(result.data.message)     
+                    toast.success(result.data.message)
                 }
                 else {
                     if (result.response.status == 406) {
@@ -58,21 +59,21 @@ const Signup = () => {
 
     return (
         <>
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 py-8 px-4">
-                <div className="container max-w-4xl bg-white shadow-lg rounded-lg p-6">
-                    <h3 className="text-2xl font-semibold">Register your account</h3>
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="container max-w-3xl bg-white shadow-xl rounded-xl p-6">
+                    <h3 className="text-2xl font-semibold mb-2">Register your account</h3>
                     <div className="flex flex-col md:flex-row items-center">
                         {/* Form Section */}
-                        <div className="w-full md:w-1/2 p-4">
-                            <form className="space-y-4">
+                        <div className="w-full md:w-1/2 p-3">
+                            <form className="space-y-2">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Fullname</label>
                                     <input
                                         value={userInput.fullname}
                                         onChange={(e) => setUserInput({ ...userInput, fullname: e.target.value })}
-                                        type="text"
-                                        placeholder="Fullname"
-                                        className="w-full  p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
+                                        type="email"
+                                        placeholder=" Enter fullname"
+                                        className="w-full text-sm p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
                                     />
                                 </div>
                                 <div>
@@ -81,8 +82,8 @@ const Signup = () => {
                                         value={userInput.email}
                                         onChange={(e) => setUserInput({ ...userInput, email: e.target.value })}
                                         type="text"
-                                        placeholder="Email address"
-                                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
+                                        placeholder=" Enter email address"
+                                        className="w-full text-sm p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
                                     />
                                 </div>
                                 <div>
@@ -91,8 +92,8 @@ const Signup = () => {
                                         value={userInput.phoneNumber}
                                         onChange={(e) => setUserInput({ ...userInput, phoneNumber: e.target.value })}
                                         type="text"
-                                        placeholder="Phone Number"
-                                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
+                                        placeholder=" Enter phone Number"
+                                        className="w-full text-sm p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
                                     />
                                 </div>
 
@@ -102,8 +103,8 @@ const Signup = () => {
                                         value={userInput.password}
                                         onChange={(e) => setUserInput({ ...userInput, password: e.target.value })}
                                         type="password"
-                                        placeholder="Password"
-                                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
+                                        placeholder=" Enter password"
+                                        className="w-full text-sm p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
                                     />
                                 </div>
 
@@ -121,13 +122,13 @@ const Signup = () => {
                                         </label>
                                     </div>
                                 </div>
-                                <div className="mt-6">
+                                <div className="mt-4">
                                     <button
                                         onClick={handleRegister}
                                         className="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700 transition">
                                         Register
                                     </button>
-                                    <p className="text-sm mt-4 text-center">
+                                    <p className="text-sm mt-3 text-center">
                                         Existing User? Please Click here to{' '}
                                         <Link to="/login" className="text-purple-600 hover:underline">
                                             Login
@@ -141,7 +142,7 @@ const Signup = () => {
                         {/* Image Section */}
                         <div className="w-full md:w-1/2 p-4 flex justify-center">
                             <img
-                                src={loginImg}
+                                src={assets.loginImg}
                                 alt="Login"
                                 className="max-w-sm h-80 w-full object-contain"
                             />

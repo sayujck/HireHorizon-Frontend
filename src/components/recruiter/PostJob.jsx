@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import { getAllCompanyAPI, postJobAPI } from '@/services/allAPI'
-import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 
 
 const PostJob = () => {
@@ -29,7 +29,6 @@ const PostJob = () => {
     const changeEventHandler = (e) => {
         setJobDetails({ ...jobDetails, [e.target.name]: e.target.value })
     }
-    console.log(jobDetails);
 
     const getCompany = async () => {
         const token = sessionStorage.getItem('token');
@@ -49,7 +48,6 @@ const PostJob = () => {
 
     const postJob = async (e) => {
         e.preventDefault()
-        console.log(jobDetails);
         const token = sessionStorage.getItem('token');
         if (token) {
             const reqHeader = {
@@ -73,7 +71,7 @@ const PostJob = () => {
                     });
                     navigate('/recruiter/jobs')
                 } else {
-                    toast.error(res.data.message || "Failed to post job");
+                    toast.error(res.response.data.message);
                 }
             } catch (error) {
                 console.log(error);
@@ -83,16 +81,16 @@ const PostJob = () => {
 
     return (
         <>
-                <div className='flex items-center mx-80 w-screen my-5'>
-                    <Button
-                        onClick={() => navigate('/recruiter/jobs')}
-                        variant="outline"
-                        className="flex items-center gap-2 text-gray-500 font-semibold"
-                    >
-                        <ArrowLeft />
-                        <span>Back</span>
-                    </Button>
-                </div>
+            <div className='flex items-center mx-80 w-screen my-5'>
+                <Button
+                    onClick={() => navigate('/recruiter/jobs')}
+                    variant="outline"
+                    className="flex items-center gap-2 text-black font-semibold"
+                >
+                    <ArrowLeft />
+                    <span>Back</span>
+                </Button>
+            </div>
             <div className='flex items-center justify-center w-screen my-5'>
                 <form onSubmit={postJob} className='p-8 max-w-4xl border border-gray-200 shadow-lg rounded-md'>
                     <div className='grid grid-cols-2 gap-2'>
@@ -127,7 +125,7 @@ const PostJob = () => {
                             />
                         </div>
                         <div>
-                            <Label>Salary</Label>
+                            <Label>Salary (LPA)</Label>
                             <Input
                                 type="text"
                                 name="salary"
@@ -148,13 +146,18 @@ const PostJob = () => {
                         </div>
                         <div>
                             <Label>Job Type</Label>
-                            <Input
-                                type="text"
-                                name="jobType"
-                                value={jobDetails.jobType}
-                                onChange={changeEventHandler}
-                                className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
-                            />
+                            <Select onValueChange={(value) => setJobDetails({ ...jobDetails, jobType: value })}>
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Select Job Type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {['Full Time', 'Part Time', 'Remote'].map((job, index) => (
+                                        <SelectItem key={index} value={job}>
+                                            {job}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
                         <div>
                             <Label>Experience Level</Label>
@@ -172,11 +175,14 @@ const PostJob = () => {
                                 type="number"
                                 name="vacancy"
                                 value={jobDetails.vacancy}
+                                min="1"
                                 onChange={changeEventHandler}
                                 className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
                             />
                         </div>
-                        <Select onValueChange={(value) => setJobDetails({ ...jobDetails, companyId: value })}>
+                        <div>
+                            <Label>Company</Label>
+                            <Select onValueChange={(value) => setJobDetails({ ...jobDetails, companyId: value })}>
                             <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="Select a Company" />
                             </SelectTrigger>
@@ -188,14 +194,12 @@ const PostJob = () => {
                                 ))}
                             </SelectContent>
                         </Select>
+                        </div>
                     </div>
                     {
                         loading ?
-                            <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4 border">Post New Job</Button>
+                            <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full bg-purple-700 text-white mt-6 border ">Post New Job</Button>
                     }
-
-                    <p className='text-xs text-red-600 font-bold text-center my-3'>*Please register a company first, before posting a jobs</p>
-
                 </form>
             </div>
         </>

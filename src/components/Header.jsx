@@ -1,177 +1,131 @@
+import { assets } from '@/assets/assets'
+import store from '@/redux/store'
 import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux';
-import { Button } from './ui/button';
-import { Avatar, AvatarImage } from './ui/avatar';
-import { Menu, X, User, LogOut } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { persistStore } from "redux-persist";
-import store from '@/redux/store';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast'
+import { useSelector } from 'react-redux'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { persistStore } from 'redux-persist'
 
 
 const Header = () => {
 
-  const { user } = useSelector(store => store.auth)
-  const navigate = useNavigate()
-  const persistor = persistStore(store);
-  const [menuOpen, setMenuOpen] = useState(false);
+    const [open, setOpen] = useState(false)
+    const { user } = useSelector(store => store.auth)
 
-  const logout = () => {
-    persistor.purge();
-    navigate("/");
-    window.location.reload();
-    sessionStorage.clear();
-  }
+    const navigate = useNavigate()
+    const persistor = persistStore(store);
 
+    const logout = () => {
+        persistor.purge();
+        navigate("/");
+        window.location.reload();
+        sessionStorage.clear();
+    }
 
-  return (
-
-    <nav className="px-4 py-3 flex justify-between items-center bg-white shadow-md relative">
-
-      {/* Logo */}
-      {
-        user?.userType === "recruiter" ? <Link className="text-2xl font-bold text-black">HireHorizon</Link> : <Link to={"/"} className="text-2xl font-bold text-black">HireHorizon</Link>
-      }
-
-      {/* Desktop Navigation */}
-      <div className="hidden md:flex items-center space-x-8 text-lg font-semibold">
-        {user?.userType === "recruiter" ? (
-          <>
-            <Link to="/recruiter/companies" className="text-black hover:text-gray-700">Companies</Link>
-            <Link to="/recruiter/jobs" className="text-black hover:text-gray-700">Jobs</Link>
-          </>
-        ) : (
-          <>
-            <Link to="/" className="text-black hover:text-gray-700">Home</Link>
-            <Button
-              onClick={() => {
-                user ? navigate("/jobs") : toast.error("Please login to view jobs");
-              }}
-              className="bg-transparent text-black text-md font-semibold hover:text-gray-700 px-0 shadow-none focus:ring-0"
-            >
-              Find Job
-            </Button>
-          </>
-        )}
-        <Link className="text-black hover:text-gray-700">About Us</Link>
-        <Link className="text-black hover:text-gray-700">Contact Us</Link>
-      </div>
-
-      {/* Profile */}
-      <div className="hidden md:block">
-        {!user ? (
-          <>
-            <Link to="/login">
-              <Button variant="outline" className="text-black border hover:bg-gray-100 me-3">Login</Button>
-            </Link>
-            <Link to="/register">
-              <Button className="bg-purple-700 text-white hover:bg-purple-800">Signup</Button>
-            </Link>
-          </>
-        ) : (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Avatar>
-                <AvatarImage src={user.profile.profilePic ? user.profile.profilePic : "https://i.pinimg.com/736x/b1/33/4f/b1334f43d458b7a3794cd239928370c7.jpg"} alt="User Avatar" />
-              </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <User />
-                  <Link to="/profile">Profile</Link>
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuItem>
-                <LogOut />
-                <button onClick={logout}>Log out</button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
-      </div>
-
-      {/* Hamburger Menu (Mobile) */}
-      <button
-        className="md:hidden p-2"
-        onClick={() => setMenuOpen(!menuOpen)}
-      >
-        {menuOpen ? <X size={28} /> : <Menu size={28} />}
-      </button>
-
-      {/* Mobile Menu */}
-      {menuOpen && (
-        <div className="absolute top-16 left-0 w-full bg-white shadow-md p-4 flex flex-col space-y-4 md:hidden">
-          {user?.userType === "recruiter" ? (
-            <>
-              <Link to="/recruiter/jobs" className="text-black">Jobs</Link>
-              <Link to="/recruiter/companies" className="text-black">Companies</Link>
-            </>
-          ) : (
-            <>
-              <Link to="/" className="text-black">Home</Link>
-              <Link>
-                <Button
-                  onClick={() => {
-                    user ? navigate("/jobs") : toast.error("Please login to view jobs");
-                  }}
-                  className="text-md font-normal p-0"
-                >
-                  Find Job
-                </Button>
-              </Link>
-            </>
-          )}
-          <Link className="text-black">About Us</Link>
-          <Link className="text-black">Contact Us</Link>
-
-          {!user ? (
-            <div className="flex flex-col space-y-2">
-              <Link to="/login">
-                <Button variant="outline" className="text-black border hover:bg-gray-100">Login</Button>
-              </Link>
-              <Link to="/register">
-                <Button className="bg-purple-700 text-white hover:bg-purple-800">Signup</Button>
-              </Link>
+    return (
+        <nav className="flex items-center justify-between px-6 md:px-8 lg:px-10 xl:px-12 py-3 border-gray-300 bg-white relative transition-all">
+            <NavLink to={'/'}><p className='text-xl font-semibold md:text-2xl md:font-bold'>HireHorizon</p></NavLink>
+            {/* Desktop Menu */}
+            <div className="hidden sm:flex items-center gap-4">
+                {user?.userType === "recruiter" ? (
+                    <>
+                        <NavLink to="/recruiter/jobs" className="block text-lg font-semibold">Jobs</NavLink>
+                        <NavLink to="/recruiter/companies" className="block text-lg font-semibold">Companies</NavLink>
+                    </>
+                ) : (
+                    <>
+                        <NavLink to={'/'} className="block text-lg font-semibold">Home</NavLink>
+                        <div onClick={() => {
+                            user ? navigate("/jobs") : toast.error("Please login to view jobs");
+                        }} className="block text-lg font-semibold cursor-pointer">Jobs</div>
+                    </>
+                )
+                }
+                <NavLink to={'#'} className="block text-lg font-semibold">About Us</NavLink>
+                <NavLink to={'#'} className="block text-lg font-semibold">Contact</NavLink>
             </div>
-          ) : (
-            <div className="mt-4">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Avatar>
-                    <AvatarImage src={user.profile.profilePic ? user.profile.profilePic : "https://github.com/shadcn.png"} alt="User Avatar" />
-                  </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem>
-                      <User />
-                      <Link to="/profile">Profile</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem >
-                      <LogOut />
-                      <button onClick={logout}>Log out</button>
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          )}
-        </div>
-      )}
+            {
+                !user ? (
+                    <div className='hidden sm:flex items-center gap-2'>
+                        <button onClick={() => navigate('/login')} className="cursor-pointer px-5 py-1.5 bg-purple-700 text-sm hover:bg-purple-800 transition text-white rounded-full">
+                            Login
+                        </button>
+                        <button onClick={() => navigate('/register')} className="cursor-pointer px-5 py-1.5 bg-purple-700 text-sm hover:bg-purple-800 transition text-white rounded-full">
+                            Signup
+                        </button>
+                    </div>
+                ) : (
+                    user.userType === 'recruiter' ? (
+                        <div className='hidden relative group md:block'>
+                            <img src={user.profile.profilePic ? user.profile.profilePic : assets.profile_icon} className='w-10 h-10 rounded-full' alt="" />
+                            <ul className='hidden group-hover:block absolute top-10 right-0 bg-white shadow border border-gray-200 py-2.5 w-30 rounded z-40'>
+                                <li onClick={logout} className='pl-5 cursor-pointer'>Logout</li>
+                            </ul>
+                        </div>
+                    ) : (
+                        <div className={`hidden relative group sm:block md:block lg:block`}>
+                            <img src={user.profile.profilePic ? user.profile.profilePic : assets.profile_icon} className='w-10 h-10 rounded-full' alt="" />
+                            <ul className='hidden group-hover:block absolute top-10 right-0 bg-white shadow border border-gray-200 py-2.5 w-30 rounded z-40'>
+                                <li onClick={() => navigate('/profile')} className='pl-5 cursor-pointer'>My Profile</li>
+                                <li onClick={logout} className='pl-5 cursor-pointer'>Logout</li>
+                            </ul>
+                        </div>
+                    )
+                )
+            }
+            <button onClick={() => open ? setOpen(false) : setOpen(true)} aria-label="Menu" className="sm:hidden">
+                {/* Menu Icon SVG */}
+                <svg width="21" height="15" viewBox="0 0 21 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="21" height="1.5" rx=".75" fill="#426287" />
+                    <rect x="8" y="6" width="13" height="1.5" rx=".75" fill="#426287" />
+                    <rect x="6" y="13" width="15" height="1.5" rx=".75" fill="#426287" />
+                </svg>
+            </button>
 
-    </nav>
-  )
+            {/* Mobile Menu */}
+            <div onClick={() => open ? setOpen(false) : setOpen(true)} className={`${open ? 'flex' : 'hidden'} absolute top-[40px] left-0 w-full bg-white shadow-md py-4 flex-col items-start gap-2 px-6 text-sm md:hidden`}>
+                {
+                    user?.userType == 'recruiter' ? (
+                        <>
+                            <NavLink to="/recruiter/jobs" className="block text-md font-semibold">Jobs</NavLink>
+                            <NavLink to="/recruiter/companies" className="block text-md font-semibold">Companies</NavLink>
+                        </>
+                    ) : (
+                        <>
+                            <NavLink to={'/'} className="block text-md font-semibold">Home</NavLink>
+                            <div onClick={() => {
+                                user ? navigate("/jobs") : toast.error("Please login to view jobs");
+                            }} className="block text-md font-semibold cursor-pointer">Find Jobs</div>
+                        </>
+                    )
+                }
+
+                <NavLink to={'/'} className="block text-md font-semibold">About Us</NavLink>
+                {
+                    !user ? (
+                        <div>
+                            <button onClick={() => navigate('/login')} className="cursor-pointer px-4 py-1.5 mt-2 mr-2 bg-purple-700 hover:bg-purple-800 transition text-white rounded-full text-sm">
+                                Login
+                            </button>
+                            <button onClick={() => navigate('/register')} className="cursor-pointer px-4 py-1.5 bg-purple-700 hover:bg-purple-800 transition text-white rounded-full text-sm">
+                                Signup
+                            </button>
+                        </div>
+                    ) : (
+                        <div className='relative group'>
+                            <img src={assets.profile_icon} className='w-10' alt="" />
+                            <ul className='hidden group-hover:block absolute top-10 right-0 bg-white shadow border border-gray-200 py-2.5 w-30 rounded z-40'>
+                                <li onClick={() => navigate('/profile')} className='p-1.5 pl-3 hover:bg-primary/10 cursor-pointer'>My Profile</li>
+                                <li className='p-1.5 pl-3 hover:bg-primary/10 cursor-pointer'>Logout</li>
+                            </ul>
+                        </div>)
+                }
+
+            </div>
+        </nav >
+    )
 }
+
+
 
 export default Header

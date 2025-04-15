@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
-import { Avatar, AvatarImage } from '../ui/avatar';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { Edit2, MoreHorizontal } from 'lucide-react';
+import { Edit2 } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,47 +17,27 @@ const CompaniesTable = () => {
 
 
     return (
-        <div>
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Logo</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Date</TableHead>
-                        <TableHead className="text-right">Action</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {filterCompany?.length > 0 ? (
-                        filterCompany.map(company => (
-                            <TableRow key={company._id}>
-                                <TableCell>
-                                    <Avatar className="w-10 h-10">
-                                        <AvatarImage src={company.logo} alt={company.name} />
-                                    </Avatar>
-                                </TableCell>
-                                <TableCell>{company.name}</TableCell>
-                                <TableCell>{company.createdAt.split("T")[0]}</TableCell>
-                                <TableCell className="text-right cursor-pointer">
-                                    <Popover>
-                                        <PopoverTrigger><MoreHorizontal /></PopoverTrigger>
-                                        <PopoverContent className="w-20 h-10 flex justify-center items-center">
-                                            <div onClick={() => navigate(`/recruiter/companies/${company._id}`)} className="flex items-center gap-2 cursor-pointer">
-                                                <Edit2 className="w-4" />
-                                                <span>Edit</span>
-                                            </div>
-                                        </PopoverContent>
-                                    </Popover>
-                                </TableCell>
-                            </TableRow>
+        <div className='flex justify-center p-5'>
+            {
+                filterCompany.length > 0 ? (<div className='grid md:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-5'>
+                    {
+                        filterCompany?.map(company => (
+                            <div key={company._id} className='p-4 shadow-lg rounded-lg min-w-75'>
+                                <div className='flex items-center justify-between gap-3 h-10'>
+                                    <div className='flex items-center gap-2'>
+                                        <img src={company.logo} alt="logo" className="w-10 h-10 rounded-full" />
+                                        <h1 className="text-md font-semibold text-gray-700 w-30 h-10 flex items-center">{company.name}</h1>
+                                    </div>
+                                    <button onClick={() => navigate(`/recruiter/companies/${company._id}`)} className="py-1 px-3 bg-purple-700 text-white rounded-md hover:bg-purple-800 transition text-sm flex items-center gap-1"><Edit2 className='w-4' />Edit</button>
+                                </div>
+                            </div>
                         ))
-                    ) : (
-                        <TableRow>
-                            <TableCell colSpan="4" className="text-center py-4">No Companies Found</TableCell>
-                        </TableRow>
-                    )}
-                </TableBody>
-            </Table>
+                    }
+
+                </div>
+                ) :
+                    <div className='mt-5 text-xl text-gray-700'>No companies created yet</div>
+            }
         </div>
     );
 };
