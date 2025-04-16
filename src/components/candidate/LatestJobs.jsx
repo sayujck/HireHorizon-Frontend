@@ -54,7 +54,7 @@ const LatestJobs = () => {
                 }
             } catch (error) {
                 console.error("Error fetching job details:", error);
-            }
+            } 
         }
         else {
             toast.error("Please Login")
@@ -81,7 +81,17 @@ const LatestJobs = () => {
             }
         }
         else {
-            toast.error("Please Login")
+            toast.error("Please login")
+        }
+    }
+
+    const viewDetails = (id) => {
+        if (user) {
+            getJobDetails(id); 
+            handleOpen();
+        }
+        else {
+            toast.error("Please login")
         }
     }
 
@@ -141,7 +151,7 @@ const LatestJobs = () => {
                                     </div>
 
                                     <div className="flex gap-2">
-                                        <button onClick={() => { getJobDetails(job?._id); handleOpen(); }} className="w-full py-2 px-2 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50" >View Details</button>
+                                        <button onClick={() => viewDetails(job?._id)} className="w-full py-2 px-2 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50" >View Details</button>
                                         <button onClick={() => applyJob(job?._id)} className="w-full py-2 px-2 text-sm bg-purple-700 text-white rounded-md hover:bg-purple-800">Apply Now</button>
                                     </div>
                                 </div>
