@@ -2,19 +2,18 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { applyJobAPI, getJobById, latestjobsAPI } from '../../services/allAPI'
 import { useSelector } from 'react-redux'
-import logo from '../../assets/logo.svg'
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import toast from 'react-hot-toast'
+import SkeletonJobCard from './SkeletonJobCard'
 
 const LatestJobs = () => {
 
     const { user } = useSelector(store => store.auth)
     const [latestjobs, setLatestjobs] = useState([])
     const [jobDetails, setJobDetails] = useState([])
-
+    const [loading, setLoading] = useState(false)
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -23,6 +22,7 @@ const LatestJobs = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
+        setLoading(true)
         getLatestJobs()
     }, [])
 
@@ -34,6 +34,8 @@ const LatestJobs = () => {
         }
         catch (err) {
             console.log(err);
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -103,55 +105,57 @@ const LatestJobs = () => {
                     <p className="text-gray-700 mt-2">Choose the latest jobs from employers and apply for the same.</p>
                 </div>
 
-                <div className="flex flex-wrap justify-center mt-10 gap-6">
-                    {latestjobs?.length > 0 &&
-                        latestjobs.map((job) => (
-                            <div key={job?._id} className="flex flex-col p-5 w-65 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all h-full">
-                            <div className="mb-2 min-h-[3rem] flex flex-col">
-                                <h3 className="text-lg font-semibold leading-tight line-clamp-2 mb-2">{job?.title}</h3>
-                                <div className="flex flex-wrap gap-1 mt-auto">
-                                    <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-purple-50 text-purple-700">
-                                        {job?.jobType}
-                                    </span>
-                                    <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-green-50 text-green-800">
-                                        {job?.salary} LPA
-                                    </span>
-                                </div>
-                            </div>
+                {
+                    loading ? (<div className="flex flex-wrap justify-center mt-10 gap-6 transition-all duration-300">
+                        {[...Array(3)].map((_, i) => (
+                            <SkeletonJobCard key={i} />
+                        ))}
+                    </div>) : (<div className="flex flex-wrap justify-center mt-10 gap-6">
+                        {latestjobs?.length > 0 &&
+                            latestjobs.map((job) => (
+                                <div key={job?._id} className="flex flex-col p-5 w-65 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all h-full">
+                                    <div className="mb-2 min-h-[3rem] flex flex-col">
+                                        <h3 className="text-lg font-semibold leading-tight line-clamp-2 mb-2">{job?.title}</h3>
+                                        <div className="flex flex-wrap gap-1 mt-auto">
+                                            <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-purple-50 text-purple-700">
+                                                {job?.jobType}
+                                            </span>
+                                            <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-green-50 text-green-800">
+                                                {job?.salary} LPA
+                                            </span>
+                                        </div>
+                                    </div>
 
-                            <div className="flex items-center gap-3 mb-2 min-h-[3.5rem]">
-                                <div className="flex-shrink-0">
-                                    <img
-                                        className="w-10 h-10 rounded-full object-cover border border-gray-200"
-                                        src={job?.company?.logo}
-                                        alt="logo"
-                                    />
-                                </div>
-                                <div className="min-w-0">
-                                    <h6 className="text-sm font-medium truncate">{job?.company?.name}</h6>
-                                    <p className="text-xs text-gray-500 truncate">{job?.location}</p>
-                                </div>
-                            </div>
+                                    <div className="flex items-center gap-3 mb-2 min-h-[3.5rem]">
+                                        <div className="flex-shrink-0">
+                                            <img
+                                                className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                                                src={job?.company?.logo}
+                                                alt="logo"
+                                            />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <h6 className="text-sm font-medium truncate">{job?.company?.name}</h6>
+                                            <p className="text-xs text-gray-500 truncate">{job?.location}</p>
+                                        </div>
+                                    </div>
 
-                            <div className="flex gap-2">
-                                <button onClick={() => { getJobDetails(job?._id); handleOpen(); }} className="w-full py-2 px-2 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50" >View Details</button>
-                                <button onClick={() => applyJob(job?._id)} className="w-full py-2 px-2 text-sm bg-purple-700 text-white rounded-md hover:bg-purple-800">Apply Now</button>
-                            </div>
-                        </div>
-                        ))
-                    }
-                </div>
+                                    <div className="flex gap-2">
+                                        <button onClick={() => { getJobDetails(job?._id); handleOpen(); }} className="w-full py-2 px-2 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50" >View Details</button>
+                                        <button onClick={() => applyJob(job?._id)} className="w-full py-2 px-2 text-sm bg-purple-700 text-white rounded-md hover:bg-purple-800">Apply Now</button>
+                                    </div>
+                                </div>
+                            ))
+                        }
+                    </div>)
+                }
 
                 {/* View All Button */}
                 <div className="text-center my-6">
-                    <button
-                        className="border-0 bg-transparent text-purple-600 underline cursor-pointer"
-                        onClick={viewAllJobs}
-                    >
-                        View all
-                    </button>
+                    <button className="border-0 bg-transparent text-purple-600 underline cursor-pointer" onClick={viewAllJobs}>View all</button>
                 </div>
             </div>
+
             {/* Job details Modal */}
             <>
                 <Modal

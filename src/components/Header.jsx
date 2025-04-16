@@ -56,11 +56,11 @@ const Header = () => {
                         </button>
                     </div>
                 ) : (
-                    user.userType === 'recruiter' ? (
+                    user.userType == 'recruiter' ? (
                         <div className='hidden relative group md:block'>
                             <img src={user.profile.profilePic ? user.profile.profilePic : assets.profile_icon} className='w-10 h-10 rounded-full' alt="" />
                             <ul className='hidden group-hover:block absolute top-10 right-0 bg-white shadow border border-gray-200 py-2.5 w-30 rounded z-40'>
-                                <li onClick={logout} className='pl-5 cursor-pointer'>Logout</li>
+                            <li onClick={logout} className='pl-4 cursor-pointer flex items-center gap-1'><LogOutIcon className='w-5'/> Logout</li>
                             </ul>
                         </div>
                     ) : (

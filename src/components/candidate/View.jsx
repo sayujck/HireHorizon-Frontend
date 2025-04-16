@@ -5,21 +5,23 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { useAppContext } from '@/context/AppContext';
 import toast from 'react-hot-toast';
+import SkeletonJobCard from './SkeletonJobCard';
 
 const View = ({ searchFilters, filters }) => {
 
     const { query } = useAppContext()
     const [alljobs, setAlljobs] = useState([])
     const [jobDetails, setJobDetails] = useState([])
-
+    const [loading, setLoading] = useState(false)
     const [open, setOpen] = useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
     useEffect(() => {
+        setLoading(true)
         getAllJobs()
     }, [])
-    
+
     const filteredJobs = alljobs.filter((job) => {
         return (
             (searchFilters.title === '' || job.title.toLowerCase().includes(searchFilters.title.toLowerCase())) &&
@@ -49,7 +51,8 @@ const View = ({ searchFilters, filters }) => {
 
             } catch (error) {
                 console.log(error);
-
+            } finally {
+                setLoading(false);
             }
         }
     }
@@ -101,48 +104,59 @@ const View = ({ searchFilters, filters }) => {
     return (
         <>
             {/* All jobs */}
-            <div className="grid md:grid-cols-3 lg:grid-cols-4 sm:grid-cols-2 gap-6">
-                {filteredJobs?.length > 0 ? (
-                    filteredJobs?.map((job) => (
-                        <div key={job?._id} className="flex flex-col p-5 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all h-full">
-                            <div className="mb-4 min-h-[5rem] flex flex-col">
-                                <h3 className="text-lg font-semibold line-clamp-2 mb-2">{job?.title}</h3>
-                                <div className="flex flex-wrap gap-2 mt-auto">
-                                    <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-purple-50 text-purple-700">
-                                        {job?.jobType}
-                                    </span>
-                                    <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-green-50 text-green-800">
-                                        {job?.salary} LPA
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div className="flex items-center gap-3 mb-4 min-h-[3.rem]">
-                                <div className="flex-shrink-0">
-                                    <img
-                                        className="w-10 h-10 rounded-full object-cover border border-gray-200"
-                                        src={job?.company?.logo}
-                                        alt="logo"
-                                    />
-                                </div>
-                                <div className="min-w-0">
-                                    <h6 className="text-sm font-medium truncate">{job?.company?.name}</h6>
-                                    <p className="text-xs text-gray-500 truncate">{job?.location}</p>
-                                </div>
-                            </div>
-
-                            <div className="mt-auto flex flex-col gap-2">
-                                <button onClick={() => { getJobDetails(job?._id); handleOpen(); }} className="w-full py-2 px-4 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50" >View Details</button>
-                                <button onClick={() => applyJob(job?._id)} className="w-full py-2 px-4 text-sm bg-purple-700 text-white rounded-md hover:bg-purple-800">Apply Now</button>
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <div className="col-span-full text-center py-10 text-gray-500">
-                        No jobs matching your criteria...
+            {
+                loading ? (
+                    <div className="grid md:grid-cols-3 lg:grid-cols-3 sm:grid-cols-2 gap-6 p-5">
+                            {[...Array(8)].map((_, i) => (
+                                <SkeletonJobCard key={i} />
+                            ))}
                     </div>
-                )}
-            </div>
+                ) : (
+                    <div className="grid md:grid-cols-3 lg:grid-cols-4 sm:grid-cols-2 gap-6">
+                        {filteredJobs?.length > 0 ? (
+                            filteredJobs?.map((job) => (
+                                <div div key={job?._id} className="flex flex-col p-5 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all h-full">
+                                    <div className="mb-4 min-h-[5rem] flex flex-col">
+                                        <h3 className="text-lg font-semibold line-clamp-2 mb-2">{job?.title}</h3>
+                                        <div className="flex flex-wrap gap-2 mt-auto">
+                                            <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-purple-50 text-purple-700">
+                                                {job?.jobType}
+                                            </span>
+                                            <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-green-50 text-green-800">
+                                                {job?.salary} LPA
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-3 mb-4 min-h-[3.rem]">
+                                        <div className="flex-shrink-0">
+                                            <img
+                                                className="w-10 h-10 rounded-full object-cover border border-gray-200"
+                                                src={job?.company?.logo}
+                                                alt="logo"
+                                            />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <h6 className="text-sm font-medium truncate">{job?.company?.name}</h6>
+                                            <p className="text-xs text-gray-500 truncate">{job?.location}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-auto flex flex-col gap-2">
+                                        <button onClick={() => { getJobDetails(job?._id); handleOpen(); }} className="w-full py-2 px-4 text-sm bg-white border border-gray-300 rounded-md hover:bg-gray-50" >View Details</button>
+                                        <button onClick={() => applyJob(job?._id)} className="w-full py-2 px-4 text-sm bg-purple-700 text-white rounded-md hover:bg-purple-800">Apply Now</button>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="col-span-full text-center py-10 text-gray-500">
+                                No jobs matching your criteria...
+                            </div>
+                        )}
+                    </div >
+                )
+            }
+
 
             {/* Job details Modal */}
             <>

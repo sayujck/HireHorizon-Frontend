@@ -19,7 +19,8 @@ const CompaniesTable = () => {
     return (
         <div className='flex justify-center p-5'>
             {
-                filterCompany.length > 0 ? (<div className='grid md:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-5'>
+                filterCompany.length > 0 ? (
+                <div className='grid md:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-5'>
                     {
                         filterCompany?.map(company => (
                             <div key={company._id} className='p-4 shadow-lg rounded-lg min-w-75'>
@@ -33,10 +34,9 @@ const CompaniesTable = () => {
                             </div>
                         ))
                     }
-
                 </div>
                 ) :
-                    <div className='mt-5 text-xl text-gray-700'>No companies created yet</div>
+                    <div className='mt-5 text-xl text-gray-700'>No companies found</div>
             }
         </div>
     );

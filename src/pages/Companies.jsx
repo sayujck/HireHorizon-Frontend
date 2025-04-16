@@ -6,14 +6,17 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { getAllCompanyAPI } from '@/services/allAPI'
 import { setCompanies, setSearchQuery } from '@/redux/companySlice'
+import SkeletonCompanyCard from '@/components/recruiter/CompanyCardSkeleton'
 
 const Companies = () => {
 
     const [input, setInput] = useState("");
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
+        setLoading(true)
         getAllCompanies()
     }, [])
 
@@ -29,7 +32,8 @@ const Companies = () => {
                 dispatch(setCompanies(result.data.companies))
             } catch (error) {
                 console.log(error);
-
+            } finally {
+                setLoading(false)
             }
         }
     }
@@ -53,7 +57,20 @@ const Companies = () => {
                     </div>
                     <Button onClick={() => navigate("/recruiter/companies/create")} className='border-1 bg-purple-700 text-white'>New Company</Button>
                 </div>
-                <CompaniesTable />
+                {
+                    loading ? (
+                       <div className='flex justify-center p-5'>
+                            <div className='grid md:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 gap-5'>
+                                {
+                                    [...Array(6)].map((_, index) => (
+                                        <SkeletonCompanyCard key={index} />
+                                    ))
+                                }
+                            </div>
+                       </div>
+                    ) : (<CompaniesTable />)
+                }
+
             </div>
         </>
     )

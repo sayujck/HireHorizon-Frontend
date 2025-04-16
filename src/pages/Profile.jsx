@@ -113,17 +113,63 @@ const Profile = () => {
                                     </DialogDescription>
                                 </DialogHeader>
                                 <div className="grid gap-4 py-4 ">
-                                    {['fullname', 'email', 'bio', 'phone', 'skills'].map((field, index) => (
+                                    {/* {['fullname', 'email', 'bio', 'phoneNumber', 'skills'].map((field, index) => (
                                         <div key={index} className="grid grid-cols-4 items-center gap-4">
                                             <Label className="text-right capitalize">{field}</Label>
                                             <Input
                                                 name={field}
-                                                defaultValue={user[field] ||  user.profile[field] || ''}
+                                                defaultValue={user[field] || user.profile[field] || ''}
                                                 className="col-span-3"
                                                 onChange={changeEventHandler}
                                             />
                                         </div>
-                                    ))}
+                                    ))} */}
+                                     <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-right capitalize">Fullname</Label>
+                                        <Input
+                                            name="fullname"
+                                            defaultValue={user?.fullname || ''}
+                                            className="col-span-3"
+                                            onChange={changeEventHandler}
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-right capitalize">Email</Label>
+                                        <Input
+                                            name="email"
+                                            defaultValue={user?.email || ''}
+                                            className="col-span-3"
+                                            onChange={changeEventHandler}
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-right capitalize">Bio</Label>
+                                        <Input
+                                            name="bio"
+                                            defaultValue={user?.profile?.bio || ''}
+                                            className="col-span-3"
+                                            onChange={changeEventHandler}
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-right capitalize">Phone</Label>
+                                        <Input
+                                            name="phoneNumber"
+                                            defaultValue={ user?.phoneNumber || ''}
+                                            className="col-span-3"
+                                            onChange={changeEventHandler}
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-right capitalize">Skills</Label>
+                                        <Input
+                                            name="skills"
+                                            defaultValue={ skills || ''}
+                                            className="col-span-3"
+                                            onChange={changeEventHandler}
+                                        />
+                                    </div>
+
                                     <div className="flex items-center gap-2">
                                         <Label htmlFor="picture" className='text-center w-24'>Profile Picture</Label>
                                         <Input
