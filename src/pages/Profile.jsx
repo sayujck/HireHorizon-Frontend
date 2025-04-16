@@ -90,7 +90,7 @@ const Profile = () => {
             {/* Profile Section */}
             <div className="container p-2 bg-white">
                 <h1 className='text-xl font-bold text-purple-800 ms-4 mb-5 md:ms-10 md:text-2xl'>User Profile</h1>
-                <div className="flex gap-3 md:pb-10">
+                <div className="flex gap-3 pb-5 md:pb-10">
 
                     <div className="flex flex-col items-center w-1/2 md:w-1/4">
                         <img width={'120px'} height={'120px'}
@@ -165,7 +165,7 @@ const Profile = () => {
 
                     </div>
 
-                    <div className="w-1/2 py-4 md:w-3/4">
+                    <div className="w-1/2 md:w-3/4">
                         <div className='flex items-center gap-2 my-2'>
                             <Mail className="text-gray-600" />
                             <p className="text-md">{user?.email}</p>
@@ -174,7 +174,7 @@ const Profile = () => {
                             <Call className=" text-gray-600" />
                             <p className="text-md">{user?.phoneNumber}</p>
                         </div>
-                        <div className="mb-3 w-100">
+                        <div className="mb-3 w-50 md:w-3/4">
                             <h6 className="text-lg font-semibold pb-2">Skills</h6>
                             <div className="flex flex-wrap gap-2">
                                 {skillsArray?.map((skill, index) => (

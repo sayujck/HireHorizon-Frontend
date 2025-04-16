@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import { Badge } from '../ui/badge';
 import { getAppliedJobAPI } from '@/services/allAPI';
+import { useNavigate } from 'react-router-dom';
 
 
 const AppliedJobs = () => {
 
+    const navigate = useNavigate()
     const [appliedJobs, setAppliedJobs] = useState([])
 
     useEffect(() => {
@@ -36,39 +30,40 @@ const AppliedJobs = () => {
 
     return (
         <>
-            <h4 className='p-4 text-2xl font-semibold mb-4'>Applied Jobs</h4>
-            {
-                appliedJobs.length > 0 ? (
-                    <TableContainer component={Paper}>
-                        <Table sx={{ maxWidth: 1240}} aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell sx={{fontWeight:700}}>Date</TableCell>
-                                    <TableCell sx={{fontWeight:700}}>Job Role</TableCell>
-                                    <TableCell sx={{fontWeight:700}}>Company</TableCell>
-                                    <TableCell sx={{fontWeight:700}}>Status</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {appliedJobs?.map((job) => (
-                                    <TableRow
-                                        key={job._id}
-                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                    >
-                                        <TableCell component="th" scope="row">{job?.createdAt.slice(0, 10)}</TableCell>
-                                        <TableCell>{job?.job?.title}</TableCell>
-                                        <TableCell>{job?.job?.company.name}</TableCell>
-                                        <TableCell><Badge className={`${job?.status === "rejected" ? 'bg-red-400 text-white' : job.status === 'pending' ? 'bg-purple-700 text-white' : 'bg-green-400 text-white'}`} variant="outline">{job?.status}</Badge></TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+            <h4 className='px-4 text-2xl font-semibold mb-4'>Applied Jobs</h4>
+                <div className="space-y-4 mb-10">
+                {appliedJobs?.length > 0 ? (
+                  appliedJobs?.map((job) => (
+                    <div key={job._id} className="p-5 border border-gray-200 rounded-lg hover:shadow-md transition-shadow bg-white" >
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3">
+                            <img className="rounded-full w-10 h-10 flex items-center justify-center" src={job.job.company.logo} alt="" />
+                            <div>
+                              <h3 className="font-semibold text-gray-800">{job?.job?.title}</h3>
+                              <p className="text-sm text-gray-600">{job?.job?.company.name}</p>
+                            </div>
+                          </div>
+                        </div>
+              
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                          <div className="text-sm text-gray-500">
+                            Applied: {new Date(job?.createdAt).toLocaleDateString()}
+                          </div>
+                          <span className={`px-3 py-1 w-fit rounded-full text-xs font-medium ${job?.status === "rejected" ? "bg-red-100 text-red-800" : job?.status === "pending" ? "bg-purple-100 text-purple-800" : "bg-green-100 text-green-800"}`}>
+                            {job?.status}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))
                 ) : (
-                    <div className='text-lg m-5' >Not applied for any jobs yet</div>
-                )
-            }
-
+                  <div className="text-center mb-15">
+                    <div className="text-gray-400 mb-5">No applications found</div>
+                    <button onClick={() => navigate('/jobs')} className="px-4 py-2 bg-purple-700 text-white rounded-md hover:bg-purple-800">Browse Jobs</button>
+                  </div>
+                )}
+              </div>
         </>
     )
 }

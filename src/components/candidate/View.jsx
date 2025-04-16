@@ -19,7 +19,7 @@ const View = ({ searchFilters, filters }) => {
     useEffect(() => {
         getAllJobs()
     }, [])
-
+    
     const filteredJobs = alljobs.filter((job) => {
         return (
             (searchFilters.title === '' || job.title.toLowerCase().includes(searchFilters.title.toLowerCase())) &&
@@ -33,7 +33,6 @@ const View = ({ searchFilters, filters }) => {
             (query.location === '' || job.location.toLowerCase().includes(query?.location.toLowerCase()))
         );
     });
-
 
     // get all jobs
     const getAllJobs = async () => {

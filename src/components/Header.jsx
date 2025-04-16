@@ -1,5 +1,6 @@
 import { assets } from '@/assets/assets'
 import store from '@/redux/store'
+import { LogOutIcon, User2 } from 'lucide-react'
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useSelector } from 'react-redux'
@@ -65,9 +66,9 @@ const Header = () => {
                     ) : (
                         <div className={`hidden relative group sm:block md:block lg:block`}>
                             <img src={user.profile.profilePic ? user.profile.profilePic : assets.profile_icon} className='w-10 h-10 rounded-full' alt="" />
-                            <ul className='hidden group-hover:block absolute top-10 right-0 bg-white shadow border border-gray-200 py-2.5 w-30 rounded z-40'>
-                                <li onClick={() => navigate('/profile')} className='pl-5 cursor-pointer'>My Profile</li>
-                                <li onClick={logout} className='pl-5 cursor-pointer'>Logout</li>
+                            <ul className='hidden group-hover:block absolute top-10 right-0 bg-white shadow border border-gray-200 py-2.5 w-35 rounded z-40'>
+                                <li onClick={() => navigate('/profile')} className='pl-4 cursor-pointer flex items-center gap-1 mb-2'><User2 className='w-5'/> My Profile</li>
+                                <li onClick={logout} className='pl-4 cursor-pointer flex items-center gap-1'><LogOutIcon className='w-5'/> Logout</li>
                             </ul>
                         </div>
                     )
@@ -114,9 +115,9 @@ const Header = () => {
                     ) : (
                         <div className='relative group'>
                             <img src={assets.profile_icon} className='w-10' alt="" />
-                            <ul className='hidden group-hover:block absolute top-10 right-0 bg-white shadow border border-gray-200 py-2.5 w-30 rounded z-40'>
-                                <li onClick={() => navigate('/profile')} className='p-1.5 pl-3 hover:bg-primary/10 cursor-pointer'>My Profile</li>
-                                <li className='p-1.5 pl-3 hover:bg-primary/10 cursor-pointer'>Logout</li>
+                            <ul className='hidden group-hover:block absolute top-10 left-0 bg-white shadow border border-gray-200 py-2.5 w-30 rounded z-40'>
+                                <li onClick={() => navigate('/profile')} className='pl-2 cursor-pointer flex items-center gap-1'><User2 className='w-5'/> My Profile</li>
+                                <li onClick={logout} className='pl-2 cursor-pointer flex items-center gap-1'><LogOutIcon className='w-5'/> Logout</li>
                             </ul>
                         </div>)
                 }
