@@ -113,17 +113,6 @@ const Profile = () => {
                                     </DialogDescription>
                                 </DialogHeader>
                                 <div className="grid gap-4 py-4 ">
-                                    {/* {['fullname', 'email', 'bio', 'phoneNumber', 'skills'].map((field, index) => (
-                                        <div key={index} className="grid grid-cols-4 items-center gap-4">
-                                            <Label className="text-right capitalize">{field}</Label>
-                                            <Input
-                                                name={field}
-                                                defaultValue={user[field] || user.profile[field] || ''}
-                                                className="col-span-3"
-                                                onChange={changeEventHandler}
-                                            />
-                                        </div>
-                                    ))} */}
                                      <div className="grid grid-cols-4 items-center gap-4">
                                         <Label className="text-right capitalize">Fullname</Label>
                                         <Input

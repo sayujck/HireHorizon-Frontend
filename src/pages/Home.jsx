@@ -1,7 +1,7 @@
 import LatestJobs from '@/components/candidate/LatestJobs'
 import CompanyLogos from '@/components/candidate/CompanyLogos'
 import Footer from '../components/Footer'
-import Banner from '@/components/Banner'
+import Banner from '@/components/candidate/Banner'
 
 
 const Home = () => {

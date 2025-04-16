@@ -30,7 +30,7 @@ const View = ({ searchFilters, filters }) => {
             (filters.minSalary === '' || job.salary >= Number(filters.minSalary)) &&
             (filters.maxSalary === '' || job.salary <= Number(filters.maxSalary)) &&
             (filters.jobType.length === 0 || filters.jobType.includes(job.jobType)) &&
-            (filters.workMode.length === 0 || filters.workMode.includes(job.workMode)) &&
+            (filters.workMode.length === 0 || filters.workMode.includes(job.jobType)) &&
             (query.title === '' || job.title.toLowerCase().includes(query?.title.toLowerCase())) &&
             (query.location === '' || job.location.toLowerCase().includes(query?.location.toLowerCase()))
         );
