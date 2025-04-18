@@ -119,7 +119,7 @@ const Login = () => {
                                 <div className="mt-6">
                                     {
                                         loading ?
-                                            <Button className='w-full border py-2 rounded-md'> <Loader2 className='mr-2 h-4 w-4 animate spin' /> Please Wait</Button>
+                                            <Button className='w-full border py-2 rounded-md'> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please Wait</Button>
                                             :
                                             <button
                                                 onClick={handleLogin}

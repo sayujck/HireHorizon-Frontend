@@ -99,7 +99,7 @@ const Profile = () => {
                             className="rounded-full border-2 border-gray-300"
                         />
                         <h2 className="text-xl font-semibold mt-4">{user?.fullname}</h2>
-                        <p className="text-gray-600 text-sm mb-4 text-center">{user?.profile.bio}</p>
+                        <p className="text-gray-600 text-sm mb-4 text-center">{user?.profile.bio ? user?.profile.bio : "Bio"}</p>
 
                         <Dialog open={open} onOpenChange={setOpen} >
                             <DialogTrigger asChild>
@@ -211,16 +211,22 @@ const Profile = () => {
                         </div>
                         <div className="mb-3 w-50 md:w-3/4">
                             <h6 className="text-lg font-semibold pb-2">Skills</h6>
-                            <div className="flex flex-wrap gap-2">
-                                {skillsArray?.map((skill, index) => (
-                                    <span
-                                        key={index}
-                                        className="bg-purple-700 text-white border px-2.5 py-0.5 rounded-full text-sm"
-                                    >
-                                        {skill}
-                                    </span>
-                                ))}
-                            </div>
+                            {
+                                skillsArray?.length === 0 ?
+                                    <span className="text-gray-500">No Skills Added</span>
+                                    :
+                                    <div className="flex flex-wrap gap-2">
+                                    {skillsArray?.map((skill, index) => (
+                                        <span
+                                            key={index}
+                                            className="bg-purple-700 text-white border px-2.5 py-0.5 rounded-full text-sm"
+                                        >
+                                            {skill}
+                                        </span>
+                                    ))}
+                                </div>
+                            }
+                           
                         </div>
 
                         <div>

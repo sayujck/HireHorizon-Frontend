@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { getAppliedJobAPI } from '@/services/allAPI';
 import { useNavigate } from 'react-router-dom';
 import SkeletonAppliedJobs from './SkeletonAppliedJobs';
+import { ArrowLeft } from 'lucide-react';
 
 
 const AppliedJobs = () => {
@@ -35,7 +36,7 @@ const AppliedJobs = () => {
 
   return (
     <>
-      <h4 className='px-4 text-2xl font-semibold mb-4'>Applied Jobs</h4>
+      <h4 className='px-4 text-2xl font-semibold mb-10'>Applied Jobs</h4>
       {
         loading ? (
           <div className="space-y-4 mb-10 transition-all duration-300">
@@ -75,10 +76,13 @@ const AppliedJobs = () => {
               ))
 
             ) : (
-              <div className="text-center mb-15">
-                <div className="text-gray-400 mb-5">No applications found</div>
-                <button onClick={() => navigate('/jobs')} className="px-4 py-2 bg-purple-700 text-white rounded-md hover:bg-purple-800">Browse Jobs</button>
-              </div>
+              <div className="flex flex-col items-center justify-center text-center py-10">
+              <p className="text-xl text-gray-400 mb-5">No applications found</p>
+              <button onClick={() => navigate('/jobs')} className="px-4 py-2 bg-purple-700 text-white rounded-md hover:bg-purple-800 flex items-center justify-center gap-2">
+                <ArrowLeft className="w-4 h-4" />
+                <span>Browse Jobs</span>
+              </button>
+            </div>     
             )}
           </div>
           )}

@@ -5,14 +5,17 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setLoading } from '../redux/authSlice';
 import toast from 'react-hot-toast';
 import { assets } from '@/assets/assets';
-
+import { Button } from './ui/button';
+import { Loader2 } from 'lucide-react';
+import { useAppContext } from '@/context/AppContext';
 
 
 const Signup = () => {
 
     const navigate = useNavigate()
     const dispatch = useDispatch();
-    const { user } =  useSelector(store=>store.auth)
+    const { loading, user } = useSelector(store => store.auth)
+    const { isvalidEmail } = useAppContext()
 
     const [userInput, setUserInput] = useState({
         fullname: "", email: "", phoneNumber: "", password: "", userType: ""
@@ -27,33 +30,40 @@ const Signup = () => {
     // register
     const handleRegister = async (e) => {
         e.preventDefault()
-        if (userInput.fullname && userInput.email && userInput.phoneNumber && userInput.password && userInput.userType) {
-            try {
-                dispatch(setLoading(true))
-                const result = await registerAPI(userInput)
-                if (result.status == 200) {
-                    setTimeout(() => {
-                        navigate("/login")
-                        setUserInput({ fullname: "", email: "", phoneNumber: "", password: "", userType: "" })
-                    }, 1000);
-                    toast.success(result.data.message)
-                }
-                else {
-                    if (result.response.status == 406) {
-                        toast.error(result.response.data.message)
-                        setUserInput({ fullname: "", email: "", phoneNumber: "", password: "", userType: "" })
-                    }
-                }
-
-            } catch (err) {
-                console.log(err);
-            } finally {
-                dispatch(setLoading(false))
-            }
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(userInput.email)) {
+            return toast.error("Enter a valid email address");
         }
         else {
-            toast.error("Fill the form completely")
+            if (userInput.fullname && userInput.email && userInput.phoneNumber && userInput.password && userInput.userType) {
+                try {
+                    dispatch(setLoading(true))
+                    const result = await registerAPI(userInput)
+                    if (result.status == 200) {
+                        setTimeout(() => {
+                            navigate("/login")
+                            setUserInput({ fullname: "", email: "", phoneNumber: "", password: "", userType: "" })
+                        }, 1000);
+                        toast.success(result.data.message)
+                    }
+                    else {
+                        if (result.response.status == 406) {
+                            toast.error(result.response.data.message)
+                            setUserInput({ fullname: "", email: "", phoneNumber: "", password: "", userType: "" })
+                        }
+                    }
+
+                } catch (err) {
+                    console.log(err);
+                } finally {
+                    dispatch(setLoading(false))
+                }
+            }
+            else {
+                toast.error("Fill the form completely")
+            }
         }
+
     }
 
 
@@ -65,13 +75,13 @@ const Signup = () => {
                     <div className="flex flex-col md:flex-row items-center">
                         {/* Form Section */}
                         <div className="w-full md:w-1/2 p-3">
-                            <form className="space-y-2">
+                            <form className="space-y-2" noValidate>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Fullname</label>
                                     <input
                                         value={userInput.fullname}
                                         onChange={(e) => setUserInput({ ...userInput, fullname: e.target.value })}
-                                        type="email"
+                                        type="text"
                                         placeholder=" Enter fullname"
                                         className="w-full text-sm p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
                                     />
@@ -81,7 +91,9 @@ const Signup = () => {
                                     <input
                                         value={userInput.email}
                                         onChange={(e) => setUserInput({ ...userInput, email: e.target.value })}
-                                        type="text"
+                                        type='email'
+                                        pattern="[^@\s]+@[^@\s]+\.[^@\s]+"
+                                        title="Please enter a valid email"
                                         placeholder=" Enter email address"
                                         className="w-full text-sm p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 outline-none"
                                     />
@@ -123,11 +135,16 @@ const Signup = () => {
                                     </div>
                                 </div>
                                 <div className="mt-4">
-                                    <button
-                                        onClick={handleRegister}
-                                        className="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700 transition">
-                                        Register
-                                    </button>
+                                    {
+                                        loading ? <Button className='w-full border py-2 rounded-md'> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please Wait</Button> : (
+                                            <button
+                                                onClick={handleRegister}
+                                                className="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700 transition">
+                                                Register
+                                            </button>
+                                        )
+                                    }
+
                                     <p className="text-sm mt-3 text-center">
                                         Existing User? Please Click here to{' '}
                                         <Link to="/login" className="text-purple-600 hover:underline">

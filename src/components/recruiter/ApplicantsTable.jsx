@@ -23,6 +23,8 @@ const ApplicantsTable = () => {
                 const res = await getApplicantsAPI(id, reqHeader)
                 if (res.status === 200) {
                     setApplicants(res.data.applications);
+                    console.log(res.data.applications);
+                    
                 }
             } catch (error) {
                 console.log(error);
@@ -91,7 +93,7 @@ const ApplicantsTable = () => {
                                                 </div>
                                             </div>
                                             <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
-                                                {application.applicant.profile.resume ? (
+                                                {application.applicant.profile?.resume ? (
                                                     <a
                                                         href={application.applicant.profile.resume}
                                                         className="px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition-colors flex items-center gap-1"

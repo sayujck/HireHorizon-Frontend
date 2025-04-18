@@ -26,7 +26,6 @@ export const AppContextProvider = ({ children }) => {
             return `Updated ${yearDiff} year${yearDiff > 1 ? 's' : ''} ago`;
         }
     }
-    
 
     const value = { query, setQuery, getJobUpdateStatus }
 
