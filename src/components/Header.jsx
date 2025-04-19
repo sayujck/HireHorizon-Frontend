@@ -113,12 +113,23 @@ const Header = () => {
                             </button>
                         </div>
                     ) : (
-                        <div className='relative group'>
-                            <img src={assets.profile_icon} className='w-10' alt="" />
-                            <ul className='hidden group-hover:block absolute top-10 left-0 bg-white shadow border border-gray-200 py-2.5 w-30 rounded z-40'>
-                                <li onClick={logout} className='pl-2 cursor-pointer flex items-center gap-2'><LogOutIcon className='w-5'/> Logout</li>
-                            </ul>
-                        </div>)
+                        user.userType == 'recruiter' ? (
+                            <div className='relative group md:hidden'>
+                                <img src={user.profile.profilePic ? user.profile.profilePic : assets.profile_icon} className='w-10 h-10 rounded-full' alt="" />
+                                <ul className='hidden group-hover:block absolute top-10 left-0 bg-white shadow border border-gray-200 py-2.5 w-30 rounded z-40'>
+                                <li onClick={logout} className='pl-4 cursor-pointer flex items-center gap-2'><LogOutIcon className='w-5'/>Logout</li>
+                                </ul>
+                            </div>
+                        ) : (
+                            <div className={`relative group sm:block`}>
+                                <img src={user.profile.profilePic ? user.profile.profilePic : assets.profile_icon} className='w-10 h-10 rounded-full' alt="" />
+                                <ul className='hidden group-hover:block absolute top-10 left-0 bg-white shadow border border-gray-200 py-2.5 w-35 rounded z-40'>
+                                    <li onClick={() => navigate('/profile')} className='pl-4 cursor-pointer flex items-center gap-2 mb-2'><User2 className='w-5'/>My Profile</li>
+                                    <li onClick={logout} className='pl-4 cursor-pointer flex items-center gap-2'><LogOutIcon className='w-5'/>Logout</li>
+                                </ul>
+                            </div>
+                        )
+                    )
                 }
 
             </div>
